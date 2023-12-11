@@ -1,37 +1,38 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './header.module.css';
+import './header.module.sass';
 
-function Header() {
-  const [isNavOpen, setIsNavOpen] = useState(false);
+const App = () => {
+  const [navWidth, setNavWidth] = useState('none');
 
   const openNav = () => {
-    setIsNavOpen(true);
-  };
+    setNavWidth('block');
+    console.log('start')
+  }
 
   const closeNav = () => {
-    setIsNavOpen(false);
-  };
+    setNavWidth('none');
+  }
 
   return (
+    <>
     <header>
-      {isNavOpen && (
-        <div className="overlay">
-          <a href="#!" className="closebtn" onClick={closeNav}>&times;</a>
-          <div className="overlay-content">
-            <a href="Menu.html"><img className="MainMenu" src="../src/assets/MainLogo.png" alt="image 1" /></a>
-            <Link to="Menu.html" onClick={closeNav}>Menu</Link>
-            <Link to="main.html" onClick={closeNav}>Characters</Link>
-            <Link to="Map.html" onClick={closeNav}>Map</Link>
-            <Link to="Profile.html" onClick={closeNav}>Profile</Link>
-          </div>
+      <div id="myNav" className="overlay" style={{ display: `${navWidth}` }}>
+        <a className="closebtn" onClick={closeNav}>&times;</a>
+        <div className="overlay-content">
+          <li><Link to="/">Главная</Link></li>
         </div>
-      )}
-
-      <span className="Menu" style={{ fontSize: "45px", cursor: "pointer", color: "white"}} onClick={openNav}>☰</span>
-      <Link to="Menu.html"><img src="../src/assets/Logo.png" alt="image 1" /></Link>
+      </div>
+      <span className="MenuButton" onClick={openNav}>&#9776;</span>
+      <li><Link to="/">Main</Link></li>
+      <li><Link to="/">Characters</Link></li>
+      <li><Link to="/">Story</Link></li>
+      <li><Link to="/">Profile</Link></li> 
+      <img src="../src/assets/Other/Logo.png" alt="image 1"></img>
     </header>
+    </>
   );
 }
 
-export default Header;
+export default App;
+

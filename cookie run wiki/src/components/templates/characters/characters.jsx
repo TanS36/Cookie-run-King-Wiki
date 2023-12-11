@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./character.css"; 
+import React, { useState, useEffect } from "react";
+import "./character.sass"; 
 import characters from "./Data_ch";
 
 const Character = () => {
@@ -8,6 +8,41 @@ const Character = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [selectedRarity, setSelectedRarity] = useState(null);
+  const [sortField, setSortField] = useState("rarity");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortedCharacters, setSortedCharacters] = useState([]);
+
+  useEffect(() => {
+    const rarityOrder = [
+      "Common",
+      "Rare",
+      "Special",
+      "Epic",
+      "Super_epic",
+      "Legendary",
+      "Dragon",
+      "Ancient",
+      "Guest",
+    ];
+
+    const sortedChars = characters.sort((a, b) => {
+      if (sortField === "rarity") {
+        if (sortOrder === "asc") {
+          return rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+        } else {
+          return rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity);
+        }
+      } else if (sortField === "name") {
+        const nameComparison = a.name.localeCompare(b.name);
+        return sortOrder === "asc" ? nameComparison : -nameComparison;
+      } else if (sortField === "id") {
+        return sortOrder === "asc" ? a.id - b.id : b.id - a.id;
+      }
+
+      return 0;
+    });
+    setSortedCharacters(sortedChars);
+  }, [sortField, sortOrder]);
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -29,13 +64,21 @@ const Character = () => {
     setSelectedRarity(rarity);
   };
 
+  const handleSortOrderChange = (field) => {
+    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newSortOrder);
+    setSortField(field);
+  };
+
   const resetFilters = () => {
     setSelectedElement(null);
     setSelectedClass(null);
     setSelectedPosition(null);
     setSelectedRarity(null);
+    setSortField("rarity");
+    setSortOrder("asc");
   };
-
+  
   const filteredCharacters = characters
     .filter((character) =>
       selectedElement ? character.element === selectedElement : true
@@ -60,7 +103,7 @@ const Character = () => {
         <div className="sort" id="myDIV">
           <div>
             <label>Элемент:</label>
-            <select onChange={(e) => handleElementChange(e.target.value)}>
+            <select value={selectedElement || ""} onChange={(e) => handleElementChange(e.target.value || null)}>
               <option value="">All</option>
               <option value="None">None</option>
               <option value="fire">Fire</option>
@@ -73,7 +116,7 @@ const Character = () => {
           </div>
           <div>
             <label>Класс:</label>
-            <select onChange={(e) => handleClassChange(e.target.value)}>
+            <select value={selectedClass || ""} onChange={(e) => handleClassChange(e.target.value || null)}>
               <option value="">All</option>
               <option value="Ambush">Ambush</option>
               <option value="Bomber">Bomber</option>
@@ -88,17 +131,16 @@ const Character = () => {
           </div>
           <div>
             <label>Позиция:</label>
-            <select onChange={(e) => handlePositionChange(e.target.value)}>
+            <select value={selectedPosition || ""} onChange={(e) => handlePositionChange(e.target.value || null)}>
               <option value="">All</option>
               <option value="Front">Front</option>
               <option value="Middle">Middle</option>
               <option value="Rear">Rear</option>
-              {/* Добавьте остальные позиции */}
             </select>
           </div>
           <div>
             <label>Редкость:</label>
-            <select onChange={(e) => handleRarityChange(e.target.value)}>
+            <select value={selectedRarity || ""} onChange={(e) => handleRarityChange(e.target.value || null)}>
               <option value="">All</option>
               <option value="Common">Common</option>
               <option value="Rare">Rare</option>
@@ -109,14 +151,15 @@ const Character = () => {
               <option value="Dragon">Dragon</option>
               <option value="Ancient">Ancient</option>
               <option value="Guest">Guest</option>
-              {/* Добавьте остальные редкости */}
             </select>
           </div>
+          <button onClick={() => handleSortOrderChange("name")}>порядок сортировки по алфавиту</button>
+          <button onClick={() => handleSortOrderChange("id")}>порядок сортировки по дате выхода</button>
           <button onClick={resetFilters}>Сбросить фильтры</button>
         </div>
       )}
 
-      <ul className="characters">
+<ul className="characters">
         {filteredCharacters.map((character, index) => (
           <li className="cookie" key={index}>
             <a href={`/${character.name.toLowerCase().replace(" ", "_")}`}>
@@ -125,8 +168,6 @@ const Character = () => {
           </li>
         ))}
       </ul>
-
-  
     </div>
   );
 };
