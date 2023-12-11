@@ -1,0 +1,15 @@
+body {
+    min-width: 360px;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden; 
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box; 
+}
