@@ -24,11 +24,11 @@ const App = () => {
         </div>
       </div>
       <span className="MenuButton" onClick={openNav}>&#9776;</span>
-      <li><Link to="/">Main</Link></li>
-      <li><Link to="/">Characters</Link></li>
-      <li><Link to="/">Story</Link></li>
-      <li><Link to="/">Profile</Link></li> 
-      <img src="../src/assets/Other/Logo.png" alt="image 1"></img>
+      <li className='Menu'><Link to="/">Main</Link></li>
+      <li className='Menu'><Link to="/">Characters</Link></li>
+      <li className='Menu'><Link to="/Story">Story</Link></li>
+      <li className='Menu'><Link to="/">Profile</Link></li> 
+      <img className="Logo" src="../src/assets/Other/Logo.png" alt="image 1"></img>
     </header>
     </>
   );
