@@ -17,18 +17,11 @@ const App = () => {
   return (
     <>
     <header>
-      <div id="myNav" className="overlay" style={{ display: `${navWidth}` }}>
-        <a className="closebtn" onClick={closeNav}>&times;</a>
-        <div className="overlay-content">
-          <li><Link to="/">Главная</Link></li>
-        </div>
-      </div>
-      <span className="MenuButton" onClick={openNav}>&#9776;</span>
       <li className='Menu'><Link to="/">Main</Link></li>
       <li className='Menu'><Link to="/">Characters</Link></li>
       <li className='Menu'><Link to="/Story">Story</Link></li>
       <li className='Menu'><Link to="/">Profile</Link></li> 
-      <img className="Logo" src="../src/assets/Other/Logo.png" alt="image 1"></img>
+      <img src="https://i.postimg.cc/85VcgYwN/Logo.png" alt="image 1"></img>
     </header>
     </>
   );

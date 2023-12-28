@@ -1,13 +1,18 @@
+// CharacterList.jsx
+
 import React from 'react';
-import YourComponent from './YourComponent.jsx'; // Путь к вашему компоненту
-import './YourComponent.sass'; // Путь к вашему стилю
+import { Link } from 'react-router-dom';
+import YourComponent from './YourComponent.jsx';
+import './YourComponent.sass';
 
 const CharacterList = ({ characters }) => {
   return (
     <ul className="characters">
       {characters.map((character, index) => (
         <li className="cookie" key={index}>
-          <YourComponent character={character} />
+          <Link to={`/characters/${character.id}`}>
+            <YourComponent character={character} />
+          </Link>
         </li>
       ))}
     </ul>

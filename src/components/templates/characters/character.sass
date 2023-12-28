@@ -5,7 +5,6 @@
   padding: 10px 0
   background: #d7c4b5
   left: 0
-  
   label
     color: #ffffff
     margin-right: 5px
@@ -13,10 +12,11 @@
     margin: auto 0px
     text-align: center
 
-.Block
+.BlockS
   display: flex
   flex-direction: row
   margin: 5px 0px
+  justify-content: center 
 
 .Search
   width: 80%
@@ -79,9 +79,19 @@ li
   justify-content: center
   margin-top: 10px
 
+@media screen and (max-width: 720px)
+  button
+    height: 50px
+    width: 100px
+  .BlockS
+    flex-wrap: wrap
 @media screen and (max-width: 600px)
-    .companent
-      font-size: 15px
+  .companent
+    font-size: 15px
+  .BlockS
+    label
+      padding: 5px
+
 
   
 

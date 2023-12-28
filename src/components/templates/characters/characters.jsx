@@ -102,12 +102,12 @@ const Character = () => {
   return (
     <div className="content">
       <div className="Sort_head" onClick={toggleFilters}>
-        <img className="Sort_Icon" src="../src/assets/Other/Sort_Icon.png" alt="Filter" />
+        <img className="Sort_Icon" src="https://i.postimg.cc/nhCC4BCb/Sort-Icon.png" alt="Filter" />
       </div>
 
       {showFilters && (
         <div className="sort" id="myDIV">
-          <div className="Block Search">
+          <div className="BlockS Search">
             <input
               type="text"
               value={searchTerm}
@@ -115,7 +115,7 @@ const Character = () => {
               placeholder="Поиск по имени"
             />
           </div>
-          <div className="Block">
+          <div className="BlockS">
             <div>
               <label>Элемент:</label>
               <select value={selectedElement || ""} onChange={(e) => handleElementChange(e.target.value || null)}>
@@ -169,9 +169,9 @@ const Character = () => {
               </select>
             </div>
           </div>
-          <div className="Block">
-            <button onClick={() => handleSortOrderChange("name")}>порядок сортировки по алфавиту</button>
-            <button onClick={() => handleSortOrderChange("id")}>порядок сортировки по дате выхода</button>
+          <div className="BlockS">
+            <button onClick={() => handleSortOrderChange("name")}>по алфавиту</button>
+            <button onClick={() => handleSortOrderChange("id")}>по дате выхода</button>
             <button onClick={resetFilters}>Сбросить фильтры</button>
           </div>
         </div>
