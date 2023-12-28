@@ -11,7 +11,9 @@ lerna-debug.log*
 node_modules
 package-lock.json
 package.json
-
+/cookie run wiki/
+/cookie run wiki/package-lock.json
+/cookie run wiki/package.json
 
 dist
 dist-ssr
