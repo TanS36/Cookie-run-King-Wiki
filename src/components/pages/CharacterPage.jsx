@@ -5,6 +5,7 @@ import Footer from '../templates/footer/footer.jsx';
 import '../organisms/CharacterPage.sass';
 import characters from '../templates/characters/Data_ch.js';
 
+
 const CharacterPage = () => {
   const { characterId } = useParams();
   const [showSkillD, setShowSkillD] = useState(true);

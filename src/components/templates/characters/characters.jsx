@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./character.sass"; 
+import "./character.sass";
 import characters from "./Data_ch";
-import CharacterList from "./characterList.jsx";
+import CharacterList from "./characterList";
+import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
+
 
 const Character = () => {
   const [showFilters, setShowFilters] = useState(false);
@@ -12,53 +14,25 @@ const Character = () => {
   const [sortField, setSortField] = useState("rarity");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(false);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
 
   useEffect(() => {
-    const rarityOrder = [
-      "Common",
-      "Rare",
-      "Special",
-      "Epic",
-      "Super_epic",
-      "Legendary",
-      "Dragon",
-      "Ancient",
-      "Guest",
-    ];
-  
-    const filteredChars = characters
-      .filter((character) =>
-        character.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .filter((character) =>
-        selectedElement ? character.element === selectedElement : true
-      )
-      .filter((character) =>
-        selectedClass ? character.class === selectedClass : true
-      )
-      .filter((character) =>
-        selectedPosition ? character.position === selectedPosition : true
-      )
-      .filter((character) =>
-        selectedRarity ? character.rarity === selectedRarity : true
-      )
-      .sort((a, b) => {
-        if (sortField === "rarity") {
-          return (
-            rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
-          ) * (sortOrder === "asc" ? 1 : -1);
-        } else if (sortField === "name") {
-          return (sortOrder === "asc" ? 1 : -1) * a.name.localeCompare(b.name);
-        } else if (sortField === "id") {
-          return (sortOrder === "asc" ? 1 : -1) * (a.id - b.id);
-        }
-        return 0;
-      });
-  
-    setFilteredCharacters(filteredChars);
-  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity]);
-  
+    const options = {
+      searchTerm,
+      selectedElement,
+      selectedClass,
+      selectedPosition,
+      selectedRarity,
+      showCharactersWithCandy,
+      sortField,
+      sortOrder,
+    };
+
+    const sortedChars = filterAndSortCharacters(characters, options);
+
+    setFilteredCharacters(sortedChars);
+  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy]);
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -93,10 +67,15 @@ const Character = () => {
     setSelectedRarity(null);
     setSortField("rarity");
     setSortOrder("asc");
+    
   };
 
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleCandyCheckboxChange = () => {
+    setShowCharactersWithCandy(!showCharactersWithCandy);
   };
 
   return (
@@ -173,6 +152,10 @@ const Character = () => {
             <button onClick={() => handleSortOrderChange("name")}>по алфавиту</button>
             <button onClick={() => handleSortOrderChange("id")}>по дате выхода</button>
             <button onClick={resetFilters}>Сбросить фильтры</button>
+          </div>
+          <div className="BlockS">
+            <label>Магические конфеты</label>
+            <input type="checkbox" checked={showCharactersWithCandy} onChange={handleCandyCheckboxChange} />
           </div>
         </div>
       )}
