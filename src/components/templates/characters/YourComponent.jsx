@@ -17,7 +17,7 @@ const YourComponent = ({ character }) => {
     <div className={`image-container ${isHovered ? 'hovered' : ''}`}
          onMouseEnter={handleMouseEnter}
          onMouseLeave={handleMouseLeave}>
-      <Link to={`/characters/${character.id}`} className="link-style">
+      <Link to={`/characters/${character.name}`} className="link-style">
         <img src={character.img} alt={character.name} className="character-image" />
         {isHovered && (
           <div className="overlay">

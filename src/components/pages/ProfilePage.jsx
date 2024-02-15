@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
-import '../organisms/StoryPage.sass'
+import '../organisms/ProfilePage.sass'
 
 const StoryPage = () => {
   return (

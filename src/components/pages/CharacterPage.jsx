@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
 import '../organisms/CharacterPage.sass';
@@ -7,12 +7,12 @@ import characters from '../templates/characters/Data_ch.js';
 
 
 const CharacterPage = () => {
-  const { characterId } = useParams();
+  const { characterName } = useParams();
   const [showSkillD, setShowSkillD] = useState(true);
   const [showCandyD, setShowCandyD] = useState(false);
 
   // Используем characterId для получения данных о конкретном персонаже
-  const character = characters.find((char) => char.id === characterId);
+  const character = characters.find((char) => char.name === characterName);
 
   // Предположим, у вас есть переменная bg в данных о персонаже, представляющая ссылку на изображение фона
   const bgImage = character ? character.bg : '';

@@ -9,6 +9,7 @@ import MainPage from "./components/pages/MainPage.jsx";
 import NoPage from "./components/pages/NoPage.jsx";
 import StoryPage from "./components/pages/StoryPage.jsx";
 import CharacterPage from "./components/pages/CharacterPage.jsx";
+import ProfilePage from "./components/pages/ProfilePage.jsx";
 
 function App() {
   return (
@@ -17,9 +18,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/Story" element={<StoryPage />} />
+          <Route path="/story" element={<StoryPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<NoPage />} />
-          <Route path="/characters/:characterId" element={<CharacterPage />} /> {/* Динамический маршрут */}
+          <Route path="/characters/:characterName" element={<CharacterPage />} />
         </Routes>
       </Router>
     </>
