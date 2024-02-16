@@ -41,7 +41,11 @@ export const rarityOrder = [
         selectedRarity ? character.rarity === selectedRarity : true
       )
       .filter((character) =>
-        showCharactersWithCandy ? character.candy !== undefined : true
+        showCharactersWithCandy === true
+          ? character.candy !== undefined
+          : showCharactersWithCandy === false
+          ? character.candy === undefined
+          : true
       );
   
     return filteredChars.sort((a, b) => {

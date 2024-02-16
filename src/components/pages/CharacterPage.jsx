@@ -167,7 +167,7 @@ const CharacterPage = () => {
             {positionImage && <img src={positionImage} alt={character.position} />}
             <p>{character.position} position</p> 
             </div>
-            <div className="blockimage Block">
+            <div className="Block">
             <img src={elementImage} alt={character.element} />
             <p>{elementText}</p> 
             </div>

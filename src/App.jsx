@@ -1,5 +1,4 @@
 import './App.css'
-import GlobalStyles from './assets/GlobalStyles.jsx';
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,7 +13,6 @@ import ProfilePage from "./components/pages/ProfilePage.jsx";
 function App() {
   return (
     <>
-    <GlobalStyles />
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />

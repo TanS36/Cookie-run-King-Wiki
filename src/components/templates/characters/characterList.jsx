@@ -1,7 +1,5 @@
 // CharacterList.jsx
-
 import React from 'react';
-import { Link } from 'react-router-dom';
 import YourComponent from './YourComponent.jsx';
 import './YourComponent.sass';
 
@@ -10,9 +8,7 @@ const CharacterList = ({ characters }) => {
     <ul className="characters">
       {characters.map((character, index) => (
         <li className="cookie" key={index}>
-          <Link to={`/characters/${character.id}`}>
-            <YourComponent character={character} />
-          </Link>
+          <YourComponent character={character} />  
         </li>
       ))}
     </ul>

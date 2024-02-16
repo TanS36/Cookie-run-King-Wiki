@@ -9,8 +9,6 @@ const Header = () => {
     setIsOpen(!isOpen);
   };
 
-  console.log(styles)
-
   return (
     <header className={`${styles.header} ${isOpen ? styles.open : ''}`}>
       <div className={styles.headerContainer} >

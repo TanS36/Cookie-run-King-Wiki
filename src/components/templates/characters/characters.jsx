@@ -14,7 +14,7 @@ const Character = () => {
   const [sortField, setSortField] = useState("rarity");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
-  const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(false);
+  const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
 
   useEffect(() => {
@@ -54,11 +54,15 @@ const Character = () => {
     setSelectedRarity(rarity);
   };
 
-  const handleSortOrderChange = (field) => {
-    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
-    setSortOrder(newSortOrder);
+  const handleSortOrderChange = (field, sortOrder) => {
+    setSortOrder(sortOrder);
     setSortField(field);
   };
+
+  const handleCandyFilterChange = (value) => {
+    setShowCharactersWithCandy(value);
+  };
+  
 
   const resetFilters = () => {
     setSelectedElement(null);
@@ -67,7 +71,8 @@ const Character = () => {
     setSelectedRarity(null);
     setSortField("rarity");
     setSortOrder("asc");
-    
+    setSearchTerm("");
+    setShowCharactersWithCandy(null);
   };
 
   const handleSearchTermChange = (event) => {
@@ -147,15 +152,45 @@ const Character = () => {
                 <option value="Guest">Guest</option>
               </select>
             </div>
+            <div>
+              <label>Сортировка:</label>
+              <select value={`${sortField}-${sortOrder}`} onChange={(e) => {const [field, order] = e.target.value.split("-"); handleSortOrderChange(field, order); }}>
+                <option value="name-asc">по алфавиту</option>
+                <option value="name-desc">обратно по алфавиту</option>
+                <option value="id-asc">по ID (возрастание)</option>
+                <option value="id-desc">по ID (убывание)</option>
+                <option value="rarity-asc" defaultValue>по умолчанию</option>
+              </select>
+            </div>
+            <div>
+              <label>Конфеты:</label>
+              <select
+                value={
+                  showCharactersWithCandy
+                    ? "with-candy"
+                    : showCharactersWithCandy === false
+                    ? "without-candy"
+                    : "all"
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "with-candy") {
+                    handleCandyFilterChange(true);
+                  } else if (value === "without-candy") {
+                    handleCandyFilterChange(false);
+                  } else {
+                    handleCandyFilterChange(null);
+                  }
+                }}
+              >
+                <option value="all" defaultValue>Показать всех</option>
+                <option value="with-candy">Только с конфетами</option>
+                <option value="without-candy">Только без конфет</option>
+              </select>
+            </div>
           </div>
           <div className="BlockS">
-            <button onClick={() => handleSortOrderChange("name")}>по алфавиту</button>
-            <button onClick={() => handleSortOrderChange("id")}>по дате выхода</button>
             <button onClick={resetFilters}>Сбросить фильтры</button>
-          </div>
-          <div className="BlockS">
-            <label>Магические конфеты</label>
-            <input type="checkbox" checked={showCharactersWithCandy} onChange={handleCandyCheckboxChange} />
           </div>
         </div>
       )}
