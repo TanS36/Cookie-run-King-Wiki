@@ -17,7 +17,7 @@ const Character = () => {
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const [charactersPerPage, setCharactersPerPage] = useState(25);
+  const [charactersPerPage, setCharactersPerPage] = useState(30);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   
@@ -54,9 +54,10 @@ const Character = () => {
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
-      setCharactersPerPage(25);
+      setCharactersPerPage(30);
       setShowAllCharacters(false);
       setShowAllButtonVisible(true);
+      setPageNumber(1); 
     } else {
       setCharactersPerPage(filteredCharacters.length);
       setShowAllCharacters(true);
@@ -70,27 +71,33 @@ const Character = () => {
 
   const handleElementChange = (element) => {
     setSelectedElement(element);
+    setPageNumber(1); 
   };
 
   const handleClassChange = (characterClass) => {
     setSelectedClass(characterClass);
+    setPageNumber(1); 
   };
 
   const handlePositionChange = (position) => {
     setSelectedPosition(position);
+    setPageNumber(1); 
   };
 
   const handleRarityChange = (rarity) => {
     setSelectedRarity(rarity);
+    setPageNumber(1); 
   };
 
   const handleSortOrderChange = (field, sortOrder) => {
     setSortOrder(sortOrder);
     setSortField(field);
+    setPageNumber(1); 
   };
 
   const handleCandyFilterChange = (value) => {
     setShowCharactersWithCandy(value);
+    setPageNumber(1); 
   };
   
 
@@ -103,14 +110,12 @@ const Character = () => {
     setSortOrder("asc");
     setSearchTerm("");
     setShowCharactersWithCandy(null);
+    setPageNumber(1); 
   };
 
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
-  };
-
-  const handleCandyCheckboxChange = () => {
-    setShowCharactersWithCandy(!showCharactersWithCandy);
+    setPageNumber(1); 
   };
 
   return (
@@ -209,7 +214,9 @@ const Character = () => {
                   } else if (value === "without-candy") {
                     handleCandyFilterChange(false);
                   } else {
-                    handleCandyFilterChange(null);
+                    if (value === "all") {
+                      handleCandyFilterChange(null);
+                    }
                   }
                 }}
               >
