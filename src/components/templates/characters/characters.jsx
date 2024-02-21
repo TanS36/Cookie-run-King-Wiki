@@ -16,7 +16,11 @@ const Character = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
-
+  const [pageNumber, setPageNumber] = useState(1);
+  const [charactersPerPage, setCharactersPerPage] = useState(25);
+  const [showAllCharacters, setShowAllCharacters] = useState(false);
+  const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
+  
   useEffect(() => {
     const options = {
       searchTerm,
@@ -31,8 +35,34 @@ const Character = () => {
 
     const sortedChars = filterAndSortCharacters(characters, options);
 
-    setFilteredCharacters(sortedChars);
-  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy]);
+    if (showAllCharacters) {
+      setFilteredCharacters(sortedChars);
+    } else {
+      setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
+    }
+  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
+  
+  const loadNextPage = () => {
+    setPageNumber(pageNumber + 1);
+  };
+
+  const loadPreviousPage = () => {
+    setPageNumber(pageNumber - 1);
+  };
+
+  const charactersOnCurrentPage = filteredCharacters.length;
+
+  const showAllCharactersHandler = () => {
+    if (showAllCharacters) {
+      setCharactersPerPage(25);
+      setShowAllCharacters(false);
+      setShowAllButtonVisible(true);
+    } else {
+      setCharactersPerPage(filteredCharacters.length);
+      setShowAllCharacters(true);
+      setShowAllButtonVisible(false);
+    }
+  };
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -191,11 +221,23 @@ const Character = () => {
           </div>
           <div className="BlockS">
             <button onClick={resetFilters}>Сбросить фильтры</button>
+            {showAllButtonVisible ? (
+              <button onClick={showAllCharactersHandler}>Показать весь список</button>
+            ) : (
+              <button onClick={showAllCharactersHandler}>Показать по страницам</button>
+            )}
           </div>
         </div>
       )}
-
+      <div className="Searchbuttons">
+      {pageNumber > 1 && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
+      {charactersOnCurrentPage === charactersPerPage && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      </div>
       <CharacterList characters={filteredCharacters} />
+      <div className="Searchbuttons">
+      {pageNumber > 1 && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
+      {charactersOnCurrentPage === charactersPerPage && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      </div>
     </div>
   );
 };

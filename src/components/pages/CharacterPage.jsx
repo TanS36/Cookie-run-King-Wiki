@@ -70,44 +70,51 @@ const CharacterPage = () => {
     }
   }
 
-  let elementImage = '';
-  let elementText = '';
+  let elementImages = [];
+  let elementTexts = [];
 
   if (character) {
-    switch (character.element) {
-      case 'None':
-        elementImage = 'https://i.postimg.cc/gjk2Y82D/Element-None.png';
-        elementText = "Without element"
-        break;
-      case 'poison':
-        elementImage = 'https://i.postimg.cc/PxHqRBG0/Element-Poison.png';
-        elementText = "Poison element"
-        break;
-      case 'light':
-        elementImage = 'https://i.postimg.cc/Kjqv4jKy/Element-Light.png';
-        elementText = "Light element"
-        break;
-      case 'water':
-        elementImage = 'https://i.postimg.cc/FK5FY2K1/Element-Water.png';
-        elementText = "Water element"
-        break;
-      case 'earth':
-        elementImage = 'https://i.postimg.cc/FK3RGh6j/Element-Earth.png';
-        elementText = "Earth element"
-        break;
-      case 'ice':
-        elementImage = 'https://i.postimg.cc/PxMqs2TJ/Element-Ice.png';
-        elementText = "Ice element"
-        break;
-      case 'fire':
-        elementImage = 'https://i.postimg.cc/ZKn528gY/Element-Fire.png';
-        elementText = "Fire element"
-        break;
-        default:
-          elementImage = 'https://i.postimg.cc/5NPXQn9S/close.png';
-          elementText = "without element";
-    }
+    character.element.forEach((element) => {
+      let image = '';
+      let text = '';
+      switch (element) {
+        case 'None':
+          image = 'https://i.postimg.cc/gjk2Y82D/Element-None.png';
+          text = 'Without element';
+          break;
+        case 'poison':
+          image = 'https://i.postimg.cc/PxHqRBG0/Element-Poison.png';
+          text = 'Poison element';
+          break;
+        case 'light':
+          image = 'https://i.postimg.cc/Kjqv4jKy/Element-Light.png';
+          text = 'Light element';
+          break;
+        case 'water':
+          image = 'https://i.postimg.cc/FK5FY2K1/Element-Water.png';
+          text = 'Water element';
+          break;
+        case 'earth':
+          image = 'https://i.postimg.cc/FK3RGh6j/Element-Earth.png';
+          text = 'Earth element';
+          break;
+        case 'ice':
+          image = 'https://i.postimg.cc/PxMqs2TJ/Element-Ice.png';
+          text = 'Ice element';
+          break;
+        case 'fire':
+          image = 'https://i.postimg.cc/ZKn528gY/Element-Fire.png';
+          text = 'Fire element';
+          break;
+        default: 
+          image = 'https://i.postimg.cc/5NPXQn9S/close.png';
+          text = 'Without element';
+      }
+      elementImages.push(image);
+      elementTexts.push(text);
+    });
   }
+
 
   let classImage = '';
 
@@ -167,10 +174,12 @@ const CharacterPage = () => {
             {positionImage && <img src={positionImage} alt={character.position} />}
             <p>{character.position} position</p> 
             </div>
-            <div className="Block">
-            <img src={elementImage} alt={character.element} />
-            <p>{elementText}</p> 
+            {elementImages.map((image, index) => (
+            <div className="Block" key={index}>
+              <img src={image} alt={character.element[index]} />
+              <p>{elementTexts[index]}</p>
             </div>
+            ))}
           </div>
         )}
         {character && (

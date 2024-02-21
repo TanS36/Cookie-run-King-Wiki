@@ -14,6 +14,13 @@
     &:hover
       transform: scale(1)
 
+  .candy_image
+    position: absolute
+    top: 3px
+    right: 3px
+    width: 45px
+    height: 45px
+
   .overlay
     position: absolute
     bottom: 0
@@ -39,12 +46,25 @@
     opacity: 1
 
 @media screen and (max-width: 900px)
+  
   .image-container
     width: 120px
     height: 120px
+    
+    .candy_image
+      top: 2px
+      right: 2px
+      width: 36px
+      height: 36px
 
 @media screen and (max-width: 600px)
+
   .image-container
     width: 100px
     height: 100px
 
+    .candy_image
+      top: 2px
+      right: 2px
+      width: 30px
+      height: 30px
