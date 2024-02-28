@@ -3,9 +3,11 @@ import "./character.sass";
 import characters from "./Data_ch";
 import CharacterList from "./characterList";
 import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
+import { RingLoader } from "react-spinners";
 
 
 const Character = () => {
+  const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedElement, setSelectedElement] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
@@ -22,6 +24,8 @@ const Character = () => {
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   
   useEffect(() => {
+    setLoading(true);
+
     const options = {
       searchTerm,
       selectedElement,
@@ -40,6 +44,8 @@ const Character = () => {
     } else {
       setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
     }
+
+    setTimeout(() => {setLoading(false);}, 500);
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
   
   const loadNextPage = () => {
@@ -114,10 +120,16 @@ const Character = () => {
   };
 
   const handleSearchTermChange = (event) => {
-    setSearchTerm(event.target.value);
-    setPageNumber(1); 
+    const searchTerm = event.target.value.toLowerCase().trim();
+    setSearchTerm(searchTerm);
+    const searchRegex = new RegExp(searchTerm.split(" ").map(word => `(?=.*${word})`).join(""), "i");
+    const filteredChars = characters.filter(character =>
+      searchRegex.test(character.name.toLowerCase())
+    );
+    setFilteredCharacters(filteredChars);
+    setPageNumber(1);
   };
-
+  
   return (
     <div className="content">
       <div className="Sort_head" onClick={toggleFilters}>
@@ -190,11 +202,11 @@ const Character = () => {
             <div>
               <label>Сортировка:</label>
               <select value={`${sortField}-${sortOrder}`} onChange={(e) => {const [field, order] = e.target.value.split("-"); handleSortOrderChange(field, order); }}>
+                <option value="rarity-asc" defaultValue>по умолчанию</option>
                 <option value="name-asc">по алфавиту</option>
                 <option value="name-desc">обратно по алфавиту</option>
                 <option value="id-asc">по ID (возрастание)</option>
                 <option value="id-desc">по ID (убывание)</option>
-                <option value="rarity-asc" defaultValue>по умолчанию</option>
               </select>
             </div>
             <div>
@@ -236,14 +248,30 @@ const Character = () => {
           </div>
         </div>
       )}
+
       <div className="Searchbuttons">
-      {pageNumber > 1 && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
-      {charactersOnCurrentPage === charactersPerPage && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      {pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
+      {charactersOnCurrentPage === charactersPerPage && !loading && (<button onClick={loadNextPage}>Следующая страница</button>)}
       </div>
-      <CharacterList characters={filteredCharacters} />
+      {loading ? (
+        <div className="loader-container">
+          <RingLoader color={"#36D7B7"} loading={loading} size={300} />
+        </div>
+      ) : (
+        <div>
+          {filteredCharacters.length > 0 ? (
+            <CharacterList characters={filteredCharacters} />
+          ) : (
+            <div className="no-results-container">
+              <p>Результат не найден</p>
+              <img src="https://cdn.comic.studio/images/cookierun/characters/b933f9e7b3af34fcd881b9191612886b/exhausted.png" alt="Exhausted"/>
+            </div>
+          )}
+        </div>
+      )}
       <div className="Searchbuttons">
-      {pageNumber > 1 && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
-      {charactersOnCurrentPage === charactersPerPage && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      {pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
+      {charactersOnCurrentPage === charactersPerPage && !loading && (<button onClick={loadNextPage}>Следующая страница</button>)}
       </div>
     </div>
   );
