@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./character.sass";
-import characters from "./Data_ch";
 import CharacterList from "./characterList";
 import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
 import { RingLoader } from "react-spinners";
-
+import { firestore } from "../../../../firebase";
+import { collection, getDocs} from "firebase/firestore"; 
 
 const Character = () => {
   const [loading, setLoading] = useState(false);
@@ -22,30 +22,46 @@ const Character = () => {
   const [charactersPerPage, setCharactersPerPage] = useState(30);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
-  
+  const [characters, setCharacters] = useState([]);
+
   useEffect(() => {
     setLoading(true);
 
-    const options = {
-      searchTerm,
-      selectedElement,
-      selectedClass,
-      selectedPosition,
-      selectedRarity,
-      showCharactersWithCandy,
-      sortField,
-      sortOrder,
+    const fetchData = async () => {
+      console.log(firestore);
+      const charactersRef = await getDocs(collection(firestore, "Characters"));
+      charactersRef.forEach((doc) => {
+        console.log(doc.id, " => ", doc.data());
+      });
+    
+      const charactersData = charactersRef.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    
+      const options = {
+        searchTerm,
+        selectedElement,
+        selectedClass,
+        selectedPosition,
+        selectedRarity,
+        showCharactersWithCandy,
+        sortField,
+        sortOrder,
+      };
+      const sortedChars = filterAndSortCharacters(charactersData, options);
+      
+      if (showAllCharacters) {
+        setFilteredCharacters(sortedChars);
+      } else {
+        setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
+      }
+      
+      setLoading(false);
     };
+    
 
-    const sortedChars = filterAndSortCharacters(characters, options);
-
-    if (showAllCharacters) {
-      setFilteredCharacters(sortedChars);
-    } else {
-      setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
-    }
-
-    setTimeout(() => {setLoading(false);}, 500);
+    fetchData();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
   
   const loadNextPage = () => {
@@ -126,9 +142,10 @@ const Character = () => {
     const filteredChars = characters.filter(character =>
       searchRegex.test(character.name.toLowerCase())
     );
-    setFilteredCharacters(filteredChars);
+    setFilteredCharacters(filteredChars); 
     setPageNumber(1);
   };
+  
   
   return (
     <div className="content">
@@ -190,12 +207,12 @@ const Character = () => {
                 <option value="">All</option>
                 <option value="Common">Common</option>
                 <option value="Rare">Rare</option>
-                <option value="Special">Special</option>
                 <option value="Epic">Epic</option>
-                <option value="Super_epic">Super epic</option>
+                <option value="Super epic">Super epic</option>
                 <option value="Legendary">Legendary</option>
                 <option value="Dragon">Dragon</option>
                 <option value="Ancient">Ancient</option>
+                <option value="Special">Special</option>
                 <option value="Guest">Guest</option>
               </select>
             </div>

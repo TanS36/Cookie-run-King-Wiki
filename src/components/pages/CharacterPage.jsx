@@ -1,225 +1,189 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
 import '../organisms/CharacterPage.sass';
-import characters from '../templates/characters/Data_ch.js';
-
+import { firestore } from "../../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const CharacterPage = () => {
   const { characterName } = useParams();
-  const [showSkillD, setShowSkillD] = useState(true);
-  const [showCandyD, setShowCandyD] = useState(false);
+  const [character, setCharacter] = useState(null);
 
-  // Используем characterId для получения данных о конкретном персонаже
-  const character = characters.find((char) => char.name === characterName);
-
-  // Предположим, у вас есть переменная bg в данных о персонаже, представляющая ссылку на изображение фона
-  const bgImage = character ? character.bg : '';
-
-  let positionImage = '';
-
-  // Устанавливаем путь к изображению в зависимости от позиции персонажа
-  if (character) {
-    switch (character.position) {
-      case 'Front':
-        positionImage = 'https://i.postimg.cc/kXv2PMMw/Front.png';
-        break;
-      case 'Middle':
-        positionImage = 'https://i.postimg.cc/NjNLLNHH/Middle.png';
-        break;
-      case 'Rear':
-        positionImage = 'https://i.postimg.cc/W1phNRhV/Rear.png';
-        break;
-      default:
-        positionImage = 'https://i.postimg.cc/5NPXQn9S/close.png';
-    }
-  }
-
-  let rarityImage = '';
-
-  if (character) {
-    switch (character.rarity) {
-      case 'Common':
-        rarityImage = 'https://i.postimg.cc/h4YTvtVr/Common.png';
-        break;
-      case 'Rare':
-        rarityImage = 'https://i.postimg.cc/8CwrSp1L/Rare.png';
-        break;
-      case 'Special':
-        rarityImage = 'https://i.postimg.cc/mDD1ZvDJ/Special.png';
-        break;
-      case 'Epic':
-        rarityImage = 'https://i.postimg.cc/VkqCK9pG/Epic.png';
-        break;
-      case 'Super_epic':
-        rarityImage = 'https://i.postimg.cc/1XVgwDDK/Super-Epic.png';
-        break;
-      case 'Legendary':
-        rarityImage = 'https://i.postimg.cc/1tjn8vVt/Legendary.png';
-        break;
-      case 'Dragon':
-        rarityImage = 'https://i.postimg.cc/7YT72rVy/Dragon.png';
-        break;
-      case 'Ancient':
-        rarityImage = 'https://i.postimg.cc/L8KPkQCg/Ancient.png';
-        break;
-      case 'Guest':
-        rarityImage = 'https://i.postimg.cc/YStmZGwp/Guest.png';
-        break;
-    }
-  }
-
-  let elementImages = [];
-  let elementTexts = [];
-
-  if (character) {
-    character.element.forEach((element) => {
-      let image = '';
-      let text = '';
-      switch (element) {
-        case 'None':
-          image = 'https://i.postimg.cc/gjk2Y82D/Element-None.png';
-          text = 'Without element';
-          break;
-        case 'poison':
-          image = 'https://i.postimg.cc/PxHqRBG0/Element-Poison.png';
-          text = 'Poison element';
-          break;
-        case 'light':
-          image = 'https://i.postimg.cc/Kjqv4jKy/Element-Light.png';
-          text = 'Light element';
-          break;
-        case 'water':
-          image = 'https://i.postimg.cc/FK5FY2K1/Element-Water.png';
-          text = 'Water element';
-          break;
-        case 'earth':
-          image = 'https://i.postimg.cc/FK3RGh6j/Element-Earth.png';
-          text = 'Earth element';
-          break;
-        case 'ice':
-          image = 'https://i.postimg.cc/PxMqs2TJ/Element-Ice.png';
-          text = 'Ice element';
-          break;
-        case 'fire':
-          image = 'https://i.postimg.cc/ZKn528gY/Element-Fire.png';
-          text = 'Fire element';
-          break;
-        default: 
-          image = 'https://i.postimg.cc/5NPXQn9S/close.png';
-          text = 'Without element';
+  useEffect(() => {
+    const fetchCharacter = async () => {
+      try {
+        const charactersRef = collection(firestore, "Characters");
+        const querySnapshot = await getDocs(charactersRef);
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.name === characterName) {
+            setCharacter(data);
+          }
+        });
+      } catch (error) {
+        console.error("Error fetching character:", error);
       }
-      elementImages.push(image);
-      elementTexts.push(text);
-    });
+    };
+
+    fetchCharacter();
+  }, [characterName]);
+
+  if (!character) {
+    return <div>Loading...</div>;
   }
 
-
-  let classImage = '';
-
-  if (character) {
-    switch (character.class) {
-      case 'Ambush':
-        classImage = 'https://i.postimg.cc/gjXB6c4Z/Ambush.png';
-        break;
-      case 'Bomber':
-        classImage = 'https://i.postimg.cc/MHC30krr/Bomber.png';
-        break;
-      case 'BTS':
-        classImage = 'https://i.postimg.cc/K8mZjT62/BTS-Class.png';
-        break;
-      case 'Charge':
-        classImage = 'https://i.postimg.cc/c1vscQbQ/Charge.png';
-        break;
-      case 'Defense':
-        classImage = 'https://i.postimg.cc/Dzfh4sG4/Defense.png';
-        break;
-      case 'Healing':
-        classImage = 'https://i.postimg.cc/kML7YB0L/Healing.png';
-        break;
-      case 'Magic':
-        classImage = 'https://i.postimg.cc/htBcgNPr/Magic.png';
-        break;
-      case 'Ranged':
-        classImage = 'https://i.postimg.cc/MKRqCzxH/Ranged.png';
-        break;
-      case 'Support':
-        classImage = 'https://i.postimg.cc/pLJxdkmt/Support.png';
-        break;
-      default: classImage = 'https://i.postimg.cc/5NPXQn9S/close.png';
+  const renderElements = () => {
+    if (Array.isArray(character.element)) {
+      return character.element.map((element, index) => (
+        <div className="Block" key={index}>
+          <img src={`https://i.postimg.cc/${getElementImage(element)}.png`} alt={element} />
+          <p>{getElementText(element)}</p>
+        </div>
+      ));
+    } else {
+      const elements = JSON.parse(character.element);
+      return elements.map((element, index) => (
+        <div className="Block" key={index}>
+          <img src={`https://i.postimg.cc/${getElementImage(element)}.png`} alt={element} />
+          <p>{getElementText(element)}</p>
+        </div>
+      ));
     }
-  }
+  };
+
+  const getElementImage = (element) => {
+    switch (element) {
+      case 'None':
+        return 'gjk2Y82D/Element-None';
+      case 'poison':
+        return 'PxHqRBG0/Element-Poison';
+      case 'light':
+        return 'Kjqv4jKy/Element-Light';
+      case 'water':
+        return 'FK5FY2K1/Element-Water';
+      case 'earth':
+        return 'FK3RGh6j/Element-Earth';
+      case 'ice':
+        return 'PxMqs2TJ/Element-Ice';
+      case 'fire':
+        return 'ZKn528gY/Element-Fire';
+      default:
+        return '5NPXQn9S/close';
+    }
+  };
+
+  const getElementText = (element) => {
+    switch (element) {
+      case 'None':
+        return 'Without element';
+      case 'poison':
+        return 'Poison element';
+      case 'light':
+        return 'Light element';
+      case 'water':
+        return 'Water element';
+      case 'earth':
+        return 'Earth element';
+      case 'ice':
+        return 'Ice element';
+      case 'fire':
+        return 'Fire element';
+      default:
+        return 'Without element';
+    }
+  };
 
   return (
     <div>
       <Header />
-      <div className="character-page" style={{ backgroundImage: `url(${bgImage})` }}>
+      <div className="character-page" style={{ backgroundImage: `url(${character.bg})` }}>
         <h1>{character.name} cookie</h1>
         <img className="character-art" src={character.ga} alt={character.name} />
       </div>
       <div className="content">
-      {character && (
-          <div className="character-details">
-            {/* <img src={character.img} alt={character.name} className="cookie"/> */}
-            <div className="Block">
-            {rarityImage && <img src={rarityImage} alt={character.rarity} />}
-            <p>{character.rarity} rarity</p> 
-            </div>
-            <div className="Block">
-            <img src={classImage} alt={character.class} /> 
-            <p>{character.class} class</p> 
-            </div>
-            <div className="blockimage Block">
-            {positionImage && <img src={positionImage} alt={character.position} />}
-            <p>{character.position} position</p> 
-            </div>
-            {elementImages.map((image, index) => (
-            <div className="Block" key={index}>
-              <img src={image} alt={character.element[index]} />
-              <p>{elementTexts[index]}</p>
-            </div>
-            ))}
+        <div className="character-details">
+          <div className="Block">
+            {character.rarity && <img src={`https://i.postimg.cc/${getRarityImage(character.rarity)}.png`} alt={character.rarity} />}
+            <p>{character.rarity} rarity</p>
           </div>
-        )}
-        {character && (
-          <div className="skill-menu">
-            <div className="SkillImage">
-              {character.skill && (
-                <img
-                  src={character.skill}
-                  alt={character.name}
-                  onClick={() => {
-                    setShowSkillD(true);
-                    setShowCandyD(false);
-                    
-                  }}
-                />
-              )}
-              {character.candy && (
-                <img
-                  src={character.candy}
-                  alt={character.name}
-                  onClick={() => {
-                    setShowSkillD(false);
-                    setShowCandyD(true);
-                  }}
-                />
-              )}
-            </div>
-            {(showSkillD || showCandyD) && (
-              <div className="SkillBlock">
-                {showSkillD && character.skillD && <p>{character.skillD}</p>}
-                {showCandyD && character.candyD && <p>{character.candyD}</p>}
-              </div>
-            )}
+          <div className="Block">
+            {character.class && <img src={`https://i.postimg.cc/${getClassImage(character.class)}.png`} alt={character.class} />}
+            <p>{character.class} class</p>
           </div>
-        )}
+          <div className="blockimage Block">
+            {character.position && <img src={`https://i.postimg.cc/${getPositionImage(character.position)}.png`} alt={character.position} />}
+            <p>{character.position} position</p>
+          </div>
+          {renderElements()}
+        </div>
       </div>
       <Footer />
     </div>
   );
 };
 
-export default CharacterPage;
+const getRarityImage = (rarity) => {
+  switch (rarity) {
+    case 'Common':
+      return 'h4YTvtVr/Common';
+    case 'Rare':
+      return '8CwrSp1L/Rare';
+    case 'Special':
+      return 'mDD1ZvDJ/Special';
+    case 'Epic':
+      return 'VkqCK9pG/Epic';
+    case 'Super epic':
+      return '1XVgwDDK/Super-Epic';
+    case 'Legendary':
+      return '1tjn8vVt/Legendary';
+    case 'Dragon':
+      return '7YT72rVy/Dragon';
+    case 'Ancient':
+      return 'L8KPkQCg/Ancient';
+    case 'Guest':
+      return 'YStmZGwp/Guest';
+    default:
+      return '5NPXQn9S/close';
+  }
+};
 
+const getClassImage = (characterClass) => {
+  switch (characterClass) {
+    case 'Ambush':
+      return 'gjXB6c4Z/Ambush';
+    case 'Bomber':
+      return 'MHC30krr/Bomber';
+    case 'BTS':
+      return 'K8mZjT62/BTS-Class';
+    case 'Charge':
+      return 'c1vscQbQ/Charge';
+    case 'Defense':
+      return 'Dzfh4sG4/Defense';
+    case 'Healing':
+      return 'kML7YB0L/Healing';
+    case 'Magic':
+      return 'htBcgNPr/Magic';
+    case 'Ranged':
+      return 'MKRqCzxH/Ranged';
+    case 'Support':
+      return 'pLJxdkmt/Support';
+    default:
+      return '5NPXQn9S/close';
+  }
+};
+
+const getPositionImage = (position) => {
+  switch (position) {
+    case 'Front':
+      return 'kXv2PMMw/Front';
+    case 'Middle':
+      return 'NjNLLNHH/Middle';
+    case 'Rear':
+      return 'W1phNRhV/Rear';
+    default:
+      return '5NPXQn9S/close';
+  }
+};
+
+export default CharacterPage;
