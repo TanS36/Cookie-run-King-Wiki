@@ -13,6 +13,8 @@ const Character = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [selectedRarity, setSelectedRarity] = useState(null);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState(null);
   const [sortField, setSortField] = useState("rarity");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,16 +30,17 @@ const Character = () => {
     setLoading(true);
 
     const fetchData = async () => {
-      console.log(firestore);
       const charactersRef = await getDocs(collection(firestore, "Characters"));
-      charactersRef.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-      });
     
-      const charactersData = charactersRef.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const charactersData = charactersRef.docs.map(doc => {
+        const data = doc.data();
+        const releaseDate = data.releaseDate ? data.releaseDate.toDate() : null; // Проверка на наличие releaseDate
+        return {
+          id: doc.id,
+          ...data,
+          releaseDate: releaseDate
+        };
+      });
     
       const options = {
         searchTerm,
@@ -48,8 +51,14 @@ const Character = () => {
         showCharactersWithCandy,
         sortField,
         sortOrder,
+        selectedGame,
+        selectedSeason
       };
+      console.log("Options:", options); 
+
       const sortedChars = filterAndSortCharacters(charactersData, options);
+
+      console.log("Filtered characters:", sortedChars);
       
       if (showAllCharacters) {
         setFilteredCharacters(sortedChars);
@@ -62,31 +71,38 @@ const Character = () => {
     
 
     fetchData();
-  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
+  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
+    selectedSeason, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
   
   const loadNextPage = () => {
-    setPageNumber(pageNumber + 1);
+    if (!showAllCharacters) {
+      setPageNumber(pageNumber + 1);
+    }
   };
-
+    
   const loadPreviousPage = () => {
-    setPageNumber(pageNumber - 1);
+    if (!showAllCharacters && pageNumber > 1) {
+      setPageNumber(pageNumber - 1);
+    }
   };
 
   const charactersOnCurrentPage = filteredCharacters.length;
 
   const showAllCharactersHandler = () => {
-    if (showAllCharacters) {
-      setCharactersPerPage(30);
-      setShowAllCharacters(false);
-      setShowAllButtonVisible(true);
-      setPageNumber(1); 
-    } else {
-      setCharactersPerPage(filteredCharacters.length);
-      setShowAllCharacters(true);
-      setShowAllButtonVisible(false);
-    }
-  };
+  if (showAllCharacters) {
+    setCharactersPerPage(30);
+    setShowAllCharacters(false);
+    setShowAllButtonVisible(true);
+    setPageNumber(1); 
+  } else {
+    setCharactersPerPage(filteredCharacters.length);
+    setShowAllCharacters(true);
+    setShowAllButtonVisible(false);
+    setPageNumber(1); 
+  }
+};
 
+  
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -111,6 +127,34 @@ const Character = () => {
     setPageNumber(1); 
   };
 
+  const handleGameChange = (game) => {
+    setSelectedGame(game);
+    setPageNumber(1);
+  };
+  
+  const handleSeasonChange = (season) => {
+    setSelectedSeason(seasons[season]);
+    setPageNumber(1);
+  };
+  
+  
+  const seasons = {
+    "Gingerbrave": { start: new Date("2021-01-21"), end: new Date("2021-04-07") },
+    "Pure Vanilla": { start: new Date("2021-04-08"), end: new Date("2021-06-20") },
+    "Sea Fairy": { start: new Date("2021-06-21"), end: new Date("2021-09-01") },
+    "Hollyberry": { start: new Date("2021-09-02"), end: new Date("2021-11-17") },
+    "Frost Queen": { start: new Date("2021-11-18"), end: new Date("2022-02-23") },
+    "Dark Cacao": { start: new Date("2022-02-24"), end: new Date("2022-05-02") },
+    "Clotted Cream": { start: new Date("2022-05-03"), end: new Date("2022-09-05") },
+    "Black Pearl": { start: new Date("2022-09-06"), end: new Date("2022-11-29") },
+    "Sherbet": { start: new Date("2022-11-18"), end: new Date("2023-01-18") },
+    "Moonlight": { start: new Date("2023-01-19"), end: new Date("2023-05-17") },
+    "Pitaya Dragon": { start: new Date("2023-05-18"), end: new Date("2023-08-08") },
+    "Mermaid's Tale": { start: new Date("2023-08-09"), end: new Date("2023-09-25") },
+    "Golden Cheese": { start: new Date("2023-09-26"), end: new Date("2024-01-18") },
+    "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-04-18") },
+  };
+  
   const handleSortOrderChange = (field, sortOrder) => {
     setSortOrder(sortOrder);
     setSortField(field);
@@ -128,6 +172,8 @@ const Character = () => {
     setSelectedClass(null);
     setSelectedPosition(null);
     setSelectedRarity(null);
+    setSelectedGame(null); 
+    setSelectedSeason(null);
     setSortField("rarity");
     setSortOrder("asc");
     setSearchTerm("");
@@ -217,13 +263,31 @@ const Character = () => {
               </select>
             </div>
             <div>
+              <label>Игра:</label>
+              <select value={selectedGame || ""} onChange={(e) => handleGameChange(e.target.value || null)}>
+                <option value="">All</option>
+                <option value="Ovenbreak">Ovenbreak</option>
+                <option value="China">China</option>
+                <option value="Kingdom">Kingdom</option>
+              </select>
+            </div>
+            <div>
+              <label>Сезон:</label>
+              <select value={selectedSeason ? Object.keys(seasons).find(key => seasons[key] === selectedSeason) : ""} onChange={(e) => handleSeasonChange(e.target.value)}>
+                <option value="">All</option>
+                {Object.keys(seasons).map(season => (
+                  <option key={season} value={season}>{season}</option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label>Сортировка:</label>
               <select value={`${sortField}-${sortOrder}`} onChange={(e) => {const [field, order] = e.target.value.split("-"); handleSortOrderChange(field, order); }}>
                 <option value="rarity-asc" defaultValue>по умолчанию</option>
                 <option value="name-asc">по алфавиту</option>
                 <option value="name-desc">обратно по алфавиту</option>
-                <option value="id-asc">по ID (возрастание)</option>
-                <option value="id-desc">по ID (убывание)</option>
+                <option value="id-asc">по дате выхода</option>
+                <option value="id-desc">обратно по дате выхода</option>
               </select>
             </div>
             <div>

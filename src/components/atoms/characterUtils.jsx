@@ -1,4 +1,3 @@
-// characterUtils.jsx
 export const rarityOrder = [
   "Common",
   "Rare",
@@ -21,6 +20,8 @@ export const filterAndSortCharacters = (characters, options) => {
     showCharactersWithCandy,
     sortField,
     sortOrder,
+    selectedGame,
+    selectedSeason
   } = options;
 
   const searchWords = searchTerm ? searchTerm.toLowerCase().split(" ").filter(word => word) : [];
@@ -28,7 +29,7 @@ export const filterAndSortCharacters = (characters, options) => {
   const filteredChars = characters.filter((character) => {
     return searchWords.every(word => character.name.toLowerCase().startsWith(word));
   }).filter((character) =>
-  selectedElement ? (character.element && character.element.includes(selectedElement)) : true
+    selectedElement ? (character.element && character.element.includes(selectedElement)) : true
   ).filter((character) =>
     selectedClass ? character.class === selectedClass : true
   ).filter((character) =>
@@ -41,7 +42,14 @@ export const filterAndSortCharacters = (characters, options) => {
         ? character.candy !== undefined
         : character.candy === undefined
       : true
+  ).filter((character) =>
+    selectedGame ? character.game === selectedGame : true // Фильтрация по выбранной игре
+  ).filter((character) =>
+    selectedSeason // Фильтрация по выбранному сезону
+      ? character.releaseDate >= selectedSeason.start && character.releaseDate <= selectedSeason.end
+      : true
   );
+  
 
   return filteredChars.sort((a, b) => {
     if (sortField === "rarity") {
@@ -49,17 +57,12 @@ export const filterAndSortCharacters = (characters, options) => {
         rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
       ) * (sortOrder === "asc" ? 1 : -1);
     } else if (sortField === "name") {
-      // Сортировка по алфавиту внутри каждого класса
-      if (a.class === b.class) {
-        return (sortOrder === "asc" ? 1 : -1) * a.name.localeCompare(b.name);
-      }
-      // Сортировка по умолчанию по классам
-      return (
-        rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
-      ) * (sortOrder === "asc" ? 1 : -1);
+      return (sortOrder === "asc" ? 1 : -1) * a.name.localeCompare(b.name);
     } else if (sortField === "id") {
       return (sortOrder === "asc" ? 1 : -1) * (a.id - b.id);
     }
     return 0;
   });
-};
+}; 
+
+

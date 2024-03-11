@@ -1,11 +1,11 @@
-// StoryPage.jsx
 import React from 'react';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
-import '../organisms/ProfilePage.sass'
-import UserProfileInfo from '../molecules/profile/UserProfileInfo.jsx'
+import '../organisms/ProfilePage.sass';
+import UserProfileInfo from '../molecules/profile/UserProfileInfo.jsx';
+import { auth } from '../../../firebase';
 
-const StoryPage = () => {
+const ProfilePage = () => {
   // Предположим, у вас есть данные пользователя
   const userData = {
     username: 'User123',
@@ -28,5 +28,4 @@ const StoryPage = () => {
   );
 };
 
-
-export default StoryPage;
+export default ProfilePage;
