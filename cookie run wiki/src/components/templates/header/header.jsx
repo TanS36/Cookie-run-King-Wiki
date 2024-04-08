@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './header.module.sass';
+import styles from './header.module.sass';
 
-const App = () => {
-  const [navWidth, setNavWidth] = useState('none');
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  const openNav = () => {
-    setNavWidth('block');
-    console.log('start')
-  }
-
-  const closeNav = () => {
-    setNavWidth('none');
-  }
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
-    <>
-    <header>
-      <li className='Menu'><Link to="/">Main</Link></li>
-      <li className='Menu'><Link to="/">Characters</Link></li>
-      <li className='Menu'><Link to="/Story">Story</Link></li>
-      <li className='Menu'><Link to="/">Profile</Link></li> 
-      <img src="https://i.postimg.cc/85VcgYwN/Logo.png" alt="image 1"></img>
+    <header className={`${styles.header} ${isOpen ? styles.open : ''}`}>
+      <div className={styles.headerContainer} >
+        <div className={styles.burgerMenu} onClick={toggleMenu}>
+          <div className={styles.line}></div>
+          <div className={styles.line}></div>
+          <div className={styles.line}></div>
+        </div>
+        <li className={styles.Menu}><Link to="/">Main</Link></li>
+        <li className={styles.Menu}><Link to="/">Characters</Link></li>
+        <li className={styles.Menu}><Link to="/story">Story</Link></li>
+        <li className={styles.Menu}><Link to="/profile">Profile</Link></li> 
+        <img src="https://i.postimg.cc/85VcgYwN/Logo.png" alt="image 1"></img>
+      </div>
     </header>
-    </>
   );
-}
+};
 
-export default App;
+export default Header;
 
