@@ -101,7 +101,7 @@ const CharacterPage = ({ user }) => { // Передаем объект поль�
       </div>
       <div className="content">
         <CharacterDetails character={character} />
-        <button onClick={toggleFavorite}>
+        <button className="favorite_button" onClick={toggleFavorite}>
           {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
         </button>
       </div>
