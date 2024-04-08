@@ -1,54 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { getAuth, signInWithEmailLink } from 'firebase/auth';
+import Header from '../../templates/header/header.jsx';
+import Footer from '../../templates/footer/footer.jsx';
+import styles from '../../organisms/LoginPage.module.sass';
+import {useSignInWithGoogle} from 'react-firebase-hooks/auth';
+import {auth} from '../../../../firebase.js'
 
 const LoginPage = ({ setIsAuthenticated }) => {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState(null);
-  const [isLinkSignIn, setIsLinkSignIn] = useState(false);
-
-  useEffect(() => {
-    // Проверяем, была ли страница загружена через ссылку для входа
-    if (isLinkSignIn) {
-      handleSignInWithEmailLink();
-    }
-  }, [isLinkSignIn]);
-
-  const handleSendSignInLink = async () => {
-    try {
-      const auth = getAuth();
-      await signInWithEmailLink(auth, email, window.location.href);
-      // Если нет ошибок, пользователь авторизован
-      setIsAuthenticated(true);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleSignInWithEmailLink = async () => {
-    try {
-      const auth = getAuth();
-      await signInWithEmailLink(auth, email, window.location.href);
-      setIsAuthenticated(true);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+  const [signInWithGoogle, user, loading, error2] = useSignInWithGoogle(auth);
 
   return (
     <div>
-      <h2>Login Page</h2>
-      <div>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <Header />
+      <div className={styles.content}>
+        <h2>Login Page</h2>
+        <div>
+          <button className={styles.google_login_button} onClick={() => signInWithGoogle()}>
+          <img src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Ficons8-google-48.png?alt=media&token=29de35f5-1d5b-4595-b7d5-3f1d8c0bab2d" alt="Exhausted"/>
+          Login with Google
+          </button>
+        </div>
       </div>
-      <div>
-        <button onClick={handleSendSignInLink}>Send Email Link</button>
-      </div>
-      {error && <div>{error}</div>}
+      <Footer />
     </div>
   );
 };

@@ -1,10 +1,13 @@
+//characters.jsx
 import React, { useState, useEffect } from "react";
-import "./character.sass";
+import styles from './character.module.sass';
 import CharacterList from "./characterList";
 import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
 import { collection, getDocs} from "firebase/firestore"; 
+import { useAuthState } from 'react-firebase-hooks/auth'; 
+import {auth} from '../../../../firebase.js'
 
 const Character = () => {
   const [loading, setLoading] = useState(false);
@@ -21,10 +24,11 @@ const Character = () => {
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const [charactersPerPage, setCharactersPerPage] = useState(30);
+  const [charactersPerPage, setCharactersPerPage] = useState(36);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   const [characters, setCharacters] = useState([]);
+  const [user, loading2, error] = useAuthState(auth);
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +38,7 @@ const Character = () => {
     
       const charactersData = charactersRef.docs.map(doc => {
         const data = doc.data();
-        const releaseDate = data.releaseDate ? data.releaseDate.toDate() : null; // Проверка на наличие releaseDate
+        const releaseDate = data.releaseDate ? data.releaseDate.toDate() : null; 
         return {
           id: doc.id,
           ...data,
@@ -54,21 +58,21 @@ const Character = () => {
         selectedGame,
         selectedSeason
       };
-      console.log("Options:", options); 
+      console.log("User:", user); 
 
       const sortedChars = filterAndSortCharacters(charactersData, options);
-
-      console.log("Filtered characters:", sortedChars);
+      
+      setCharacters(sortedChars); 
       
       if (showAllCharacters) {
         setFilteredCharacters(sortedChars);
+        setCharactersPerPage(sortedChars.length);
       } else {
         setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
       }
       
       setLoading(false);
     };
-    
 
     fetchData();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
@@ -89,22 +93,76 @@ const Character = () => {
   const charactersOnCurrentPage = filteredCharacters.length;
 
   const showAllCharactersHandler = () => {
-  if (showAllCharacters) {
-    setCharactersPerPage(30);
-    setShowAllCharacters(false);
-    setShowAllButtonVisible(true);
-    setPageNumber(1); 
-  } else {
-    setCharactersPerPage(filteredCharacters.length);
-    setShowAllCharacters(true);
-    setShowAllButtonVisible(false);
-    setPageNumber(1); 
-  }
-};
+    if (showAllCharacters) {
+      setCharactersPerPage(36);
+      setShowAllCharacters(false);
+      setShowAllButtonVisible(true);
+      setPageNumber(1); 
+      setFilteredCharacters(characters.slice(0, charactersPerPage));
+    } else {
+      setCharactersPerPage(characters.length);
+      setShowAllCharacters(true);
+      setShowAllButtonVisible(false);
+      setPageNumber(1); 
+      setFilteredCharacters(characters); 
+    }
+  };
 
-  
   const toggleFilters = () => {
     setShowFilters(!showFilters);
+  };
+
+  // Добавляем функцию для обновления статуса избранности персонажа
+  const toggleFavorite = async (characterId) => {
+    // Получаем документ из коллекции Favorites пользователя
+    const favoriteDocRef = doc(firestore, "Favorites", user.uid);
+
+    try {
+      const docSnapshot = await getDocs(favoriteDocRef);
+      if (docSnapshot.exists()) {
+        // Если документ существует, получаем его данные
+        const favoritesData = docSnapshot.data();
+        // Проверяем, есть ли текущий персонаж в избранных
+        const isCharacterFavorite = favoritesData.characters.includes(characterId);
+
+        // Обновляем массив избранных персонажей
+        if (isCharacterFavorite) {
+          // Если персонаж уже избранный, удаляем его из массива
+          const updatedFavorites = favoritesData.characters.filter(id => id !== characterId);
+          await setDoc(favoriteDocRef, { characters: updatedFavorites });
+        } else {
+          // Если персонаж не избранный, добавляем его в массив
+          const updatedFavorites = [...favoritesData.characters, characterId];
+          await setDoc(favoriteDocRef, { characters: updatedFavorites });
+        }
+      } else {
+        // Если документ не существует, создаем новый документ с массивом избранных персонажей
+        await setDoc(favoriteDocRef, { characters: [characterId] });
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
+
+  // Функция для проверки, является ли персонаж избранным
+  const isCharacterFavorite = (characterId) => {
+    if (user) {
+      // Если пользователь авторизован, проверяем наличие персонажа в его избранных
+      const favoriteCharacters = firestore.collection("Favorites").doc(user.uid).get();
+      return favoriteCharacters.then(doc => {
+        if (doc.exists) {
+          return doc.data().characters.includes(characterId);
+        } else {
+          return false;
+        }
+      }).catch(error => {
+        console.error("Error getting favorite characters:", error);
+        return false;
+      });
+    } else {
+      // Если пользователь не авторизован, всегда возвращаем false
+      return false;
+    }
   };
 
   const handleElementChange = (element) => {
@@ -152,7 +210,8 @@ const Character = () => {
     "Pitaya Dragon": { start: new Date("2023-05-18"), end: new Date("2023-08-08") },
     "Mermaid's Tale": { start: new Date("2023-08-09"), end: new Date("2023-09-25") },
     "Golden Cheese": { start: new Date("2023-09-26"), end: new Date("2024-01-18") },
-    "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-04-18") },
+    "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-03-26") },
+    "Cuckoo Town Square": { start: new Date("2024-03-27"), end: new Date("2024-07-18") },
   };
   
   const handleSortOrderChange = (field, sortOrder) => {
@@ -192,26 +251,26 @@ const Character = () => {
     setPageNumber(1);
   };
   
-  
   return (
-    <div className="content">
-      <div className="Sort_head" onClick={toggleFilters}>
-        <img className="Sort_Icon" src="https://i.postimg.cc/nhCC4BCb/Sort-Icon.png" alt="Filter" />
+    <div className={styles.content}>
+      <div className={styles.Sort_head} onClick={toggleFilters}>
+        <img className={styles.Sort_Icon} src="https://i.postimg.cc/nhCC4BCb/Sort-Icon.png" alt="Filter" />
       </div>
 
       {showFilters && (
-        <div className="sort" id="myDIV">
-          <div className="BlockS Search">
+        <div className={styles.sort} id="myDIV">
+          <div className={styles.BlockS + styles.Search}>
+
             <input
               type="text"
               value={searchTerm}
               onChange={handleSearchTermChange}
-              placeholder="Поиск по имени"
+              placeholder="Search by name"
             />
           </div>
-          <div className="BlockS">
-            <div>
-              <label>Элемент:</label>
+          <div className={styles.BlockS}>
+            <div className={styles.Sort_Block}>
+              <label>Element</label>
               <select value={selectedElement || ""} onChange={(e) => handleElementChange(e.target.value || null)}>
                 <option value="">All</option>
                 <option value="None">None</option>
@@ -223,8 +282,8 @@ const Character = () => {
                 <option value="ice">Ice</option>
               </select>
             </div>
-            <div>
-              <label>Класс:</label>
+            <div className={styles.Sort_Block}>
+              <label>Class</label>
               <select value={selectedClass || ""} onChange={(e) => handleClassChange(e.target.value || null)}>
                 <option value="">All</option>
                 <option value="Ambush">Ambush</option>
@@ -238,8 +297,8 @@ const Character = () => {
                 <option value="Support">Support</option>
               </select>
             </div>
-            <div>
-              <label>Позиция:</label>
+            <div className={styles.Sort_Block}>
+              <label>Position</label>
               <select value={selectedPosition || ""} onChange={(e) => handlePositionChange(e.target.value || null)}>
                 <option value="">All</option>
                 <option value="Front">Front</option>
@@ -247,8 +306,8 @@ const Character = () => {
                 <option value="Rear">Rear</option>
               </select>
             </div>
-            <div>
-              <label>Редкость:</label>
+            <div className={styles.Sort_Block}>
+              <label>Rarity</label>
               <select value={selectedRarity || ""} onChange={(e) => handleRarityChange(e.target.value || null)}>
                 <option value="">All</option>
                 <option value="Common">Common</option>
@@ -262,17 +321,17 @@ const Character = () => {
                 <option value="Guest">Guest</option>
               </select>
             </div>
-            <div>
-              <label>Игра:</label>
+            <div className={styles.Sort_Block}>
+              <label>Game</label>
               <select value={selectedGame || ""} onChange={(e) => handleGameChange(e.target.value || null)}>
                 <option value="">All</option>
                 <option value="Ovenbreak">Ovenbreak</option>
-                <option value="China">China</option>
                 <option value="Kingdom">Kingdom</option>
+                <option value="Collab">Collab</option>
               </select>
             </div>
-            <div>
-              <label>Сезон:</label>
+            <div className={styles.Sort_Block}>
+              <label>Season</label>
               <select value={selectedSeason ? Object.keys(seasons).find(key => seasons[key] === selectedSeason) : ""} onChange={(e) => handleSeasonChange(e.target.value)}>
                 <option value="">All</option>
                 {Object.keys(seasons).map(season => (
@@ -280,18 +339,18 @@ const Character = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label>Сортировка:</label>
+            <div className={styles.Sort_Block}>
+              <label>Sorting</label>
               <select value={`${sortField}-${sortOrder}`} onChange={(e) => {const [field, order] = e.target.value.split("-"); handleSortOrderChange(field, order); }}>
-                <option value="rarity-asc" defaultValue>по умолчанию</option>
-                <option value="name-asc">по алфавиту</option>
-                <option value="name-desc">обратно по алфавиту</option>
-                <option value="id-asc">по дате выхода</option>
-                <option value="id-desc">обратно по дате выхода</option>
+                <option value="rarity-asc" defaultValue>By default</option>
+                <option value="name-asc">A-Z</option>
+                <option value="name-desc">Z-A</option>
+                <option value="id-asc">Release asc</option>
+                <option value="id-desc">Release desc</option>
               </select>
             </div>
-            <div>
-              <label>Конфеты:</label>
+            <div className={styles.Sort_Block}>
+              <label>Magic candy</label>
               <select
                 value={
                   showCharactersWithCandy
@@ -313,46 +372,50 @@ const Character = () => {
                   }
                 }}
               >
-                <option value="all" defaultValue>Показать всех</option>
-                <option value="with-candy">Только с конфетами</option>
-                <option value="without-candy">Только без конфет</option>
+                <option value="all" defaultValue>All</option>
+                <option value="with-candy">With Candy</option>
+                <option value="without-candy">Without Candy</option>
               </select>
             </div>
           </div>
-          <div className="BlockS">
-            <button onClick={resetFilters}>Сбросить фильтры</button>
+          <div className={styles.BlockS}>
+            <button onClick={resetFilters}>Reset</button>
             {showAllButtonVisible ? (
-              <button onClick={showAllCharactersHandler}>Показать весь список</button>
+              <button onClick={showAllCharactersHandler}>Show All</button>
             ) : (
-              <button onClick={showAllCharactersHandler}>Показать по страницам</button>
+              <button onClick={showAllCharactersHandler}>Show Pages</button>
             )}
           </div>
         </div>
       )}
 
-      <div className="Searchbuttons">
-      {pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
-      {charactersOnCurrentPage === charactersPerPage && !loading && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      <div className={styles.Searchbuttons}>
+      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
+      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters && !loading && (<button onClick={loadNextPage}>Next Page</button>)}
       </div>
       {loading ? (
         <div className="loader-container">
           <RingLoader color={"#36D7B7"} loading={loading} size={300} />
         </div>
       ) : (
-        <div>
+        <div className={styles.characters}>
           {filteredCharacters.length > 0 ? (
-            <CharacterList characters={filteredCharacters} />
+            <CharacterList 
+              characters={filteredCharacters} 
+              toggleFavorite={toggleFavorite} 
+              isFavorite={isCharacterFavorite} 
+            />
           ) : (
-            <div className="no-results-container">
+            <div className={styles.no_results_container}>
               <p>Результат не найден</p>
               <img src="https://cdn.comic.studio/images/cookierun/characters/b933f9e7b3af34fcd881b9191612886b/exhausted.png" alt="Exhausted"/>
             </div>
           )}
         </div>
       )}
-      <div className="Searchbuttons">
-      {pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Предыдущая страница</button>}
-      {charactersOnCurrentPage === charactersPerPage && !loading && (<button onClick={loadNextPage}>Следующая страница</button>)}
+      <div className={styles.Searchbuttons}>
+      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
+      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters &&!loading && (<button onClick={loadNextPage}>Next Page</button>)}
       </div>
     </div>
   );

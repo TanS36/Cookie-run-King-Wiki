@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "build" # Поменяйте на вашу директорию, где находятся файлы сборки
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.deploy-preview]
+  command = "npm run build-preview"

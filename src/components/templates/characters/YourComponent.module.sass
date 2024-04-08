@@ -1,14 +1,14 @@
-.image-container
+.image_container
   position: relative
   width: 150px
   height: 150px
   overflow: hidden
   transition: transform 0.3s ease-out
-
+  
   &:hover
     transform: scale(1.1)
 
-  .character-image
+  .character_image
     width: 100%
     height: 100%
     &:hover
@@ -27,13 +27,13 @@
     left: 0
     width: 100%
     height: 35%
+    padding: 5px
     border-radius: 0 0 25px 25px
-    background-color: rgba(0, 0, 0, 0.7)
+    background-color: rgba(0, 0, 0, 0.6)
     display: flex
     align-items: center
     justify-content: center
     opacity: 0
-    transition: opacity 0.3s ease-out
 
     .text
       color: #fff
@@ -41,13 +41,26 @@
       text-align: center
       font-size: 16px
       font-family: Nunito
+      letter-spacing: 0.3px
 
   &:hover .overlay
     opacity: 1
+    
+  .star_icon
+    width: 30px
+    height: 30px
+    position: absolute
+    top: 5px
+    left: 5px
+    z-index: 1 
+    background-image: url('https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Ficons8-star-100.png?alt=media&token=45fb1522-9ea3-42f3-b8b8-91720b067476')
+    background-size: cover
+    .favorite 
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Ficons8-звезда-100.png?alt=media&token=273088a0-4d11-4222-b29c-39b37c32d0d7')
 
 @media screen and (max-width: 900px)
   
-  .image-container
+  .image_container
     width: 120px
     height: 120px
     
@@ -57,9 +70,14 @@
       width: 36px
       height: 36px
 
+    .overlay
+      .text
+        font-size: 13px
+      
+
 @media screen and (max-width: 600px)
 
-  .image-container
+  .image_container
     width: 100px
     height: 100px
 
@@ -68,3 +86,12 @@
       right: 2px
       width: 30px
       height: 30px
+
+    .overlay
+      height: 50%
+      padding: 4px
+      border-radius: 0 0 20px 20px
+      .text
+        font-size: 12px
+
+    

@@ -27,7 +27,10 @@ export const filterAndSortCharacters = (characters, options) => {
   const searchWords = searchTerm ? searchTerm.toLowerCase().split(" ").filter(word => word) : [];
 
   const filteredChars = characters.filter((character) => {
-    return searchWords.every(word => character.name.toLowerCase().startsWith(word));
+    return searchWords.every(word => {
+      const regex = new RegExp(`\\b${word}`, 'i'); // Создаем регулярное выражение для поиска только в начале слова
+      return character.title && regex.test(character.title.toLowerCase());
+    });
   }).filter((character) =>
     selectedElement ? (character.element && character.element.includes(selectedElement)) : true
   ).filter((character) =>
@@ -49,7 +52,6 @@ export const filterAndSortCharacters = (characters, options) => {
       ? character.releaseDate >= selectedSeason.start && character.releaseDate <= selectedSeason.end
       : true
   );
-  
 
   return filteredChars.sort((a, b) => {
     if (sortField === "rarity") {
@@ -57,12 +59,10 @@ export const filterAndSortCharacters = (characters, options) => {
         rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
       ) * (sortOrder === "asc" ? 1 : -1);
     } else if (sortField === "name") {
-      return (sortOrder === "asc" ? 1 : -1) * a.name.localeCompare(b.name);
+      return (sortOrder === "asc" ? 1 : -1) * (a.title && b.title && a.title.localeCompare(b.title));
     } else if (sortField === "id") {
       return (sortOrder === "asc" ? 1 : -1) * (a.id - b.id);
     }
     return 0;
   });
-}; 
-
-
+};

@@ -1,14 +1,14 @@
 // CharacterList.jsx
 import React from 'react';
 import YourComponent from './YourComponent.jsx';
-import './YourComponent.sass';
+import styles from './YourComponent.module.sass';
 
-const CharacterList = ({ characters }) => {
+const CharacterList = ({ characters, toggleFavorite }) => {
   return (
-    <ul className="characters">
+    <ul className={styles['characters']}>
       {characters.map((character, index) => (
-        <li className="cookie" key={index}>
-          <YourComponent character={character} />  
+        <li className={styles['cookie']} key={index}>
+          <YourComponent character={character} toggleFavorite={toggleFavorite} />  
         </li>
       ))}
     </ul>
