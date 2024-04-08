@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "build" # Поменяйте на вашу директорию, где находятся файлы сборки
+  publish = "public" 
 
 [context.production.environment]
   NODE_ENV = "production"
