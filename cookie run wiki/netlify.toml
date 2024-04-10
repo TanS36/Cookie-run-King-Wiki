@@ -1,7 +1,8 @@
 [build]
-  base = "cookie_run_wiki"
   command = "npm run build"
-  publish = "cookie_run_wiki/public"
+  publish = "public" 
+  base = "cookie run wiki" 
+
 
 [context.production.environment]
   NODE_ENV = "production"
