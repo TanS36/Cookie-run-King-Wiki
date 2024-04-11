@@ -1,3 +1,4 @@
+//App.jsx
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -18,16 +19,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/story" element={<StoryPage />} />
         <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
-        <Route
-          path="/profile"
-          element={
-            isAuthenticated ? (
-              <PrivateRoute component={ProfilePage} />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+        <Route path="/profile" element={<ProfilePage />} isAuthenticated={isAuthenticated} />
         <Route path="/characters/:characterName" element={<CharacterPage />} />
         <Route path="*" element={<NoPage />} />
       </Routes>

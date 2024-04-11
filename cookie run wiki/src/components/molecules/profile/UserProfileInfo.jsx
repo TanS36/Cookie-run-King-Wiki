@@ -1,7 +1,11 @@
 import React from 'react';
 import './UserProfileInfo.sass';
+import { useSignOut } from 'react-firebase-hooks/auth';
+import { auth } from '../../../../firebase';
 
 const UserProfileInfo = ({ username, profileIcon, status, role, description, registrationDate, editCount }) => {
+  const [signOut, loading, error] = useSignOut(auth);
+
   return (
     <div className="UserProfileInfo">
       <div className="MainProfile">
@@ -10,7 +14,7 @@ const UserProfileInfo = ({ username, profileIcon, status, role, description, reg
           <h2>{username}</h2>
           <p>Status: {status}</p>
           <p>Role: {role}</p>
-          <button onClick={() => console.log('Logout')}>Logout</button>
+          <button onClick={() => signOut()}>Logout</button>
           <button onClick={() => console.log('Settings')}>Settings</button>
         </div>
       </div>
