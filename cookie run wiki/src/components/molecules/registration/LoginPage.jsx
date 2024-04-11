@@ -1,5 +1,6 @@
 //LoginPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../templates/header/header.jsx';
 import Footer from '../../templates/footer/footer.jsx';
 import styles from '../../organisms/LoginPage.module.sass';
@@ -8,6 +9,13 @@ import {auth} from '../../../../firebase.js'
 
 const LoginPage = ({ setIsAuthenticated }) => {
   const [signInWithGoogle, user, loading, error2] = useSignInWithGoogle(auth);
+  const history = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      history('/profile')
+    }
+  }, [user]);
 
   return (
     <div>
