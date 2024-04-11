@@ -3,9 +3,3 @@
   publish = "public" 
   base = "cookie run wiki" 
 
-
-[context.production.environment]
-  NODE_ENV = "production"
-
-[context.deploy-preview]
-  command = "npm run build-preview"

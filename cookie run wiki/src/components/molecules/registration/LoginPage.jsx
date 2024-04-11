@@ -1,3 +1,4 @@
+//LoginPage.jsx
 import React, { useEffect, useState } from 'react';
 import Header from '../../templates/header/header.jsx';
 import Footer from '../../templates/footer/footer.jsx';

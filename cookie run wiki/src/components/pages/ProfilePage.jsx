@@ -1,3 +1,4 @@
+//ProfilePage.jsx
 import React from 'react';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
