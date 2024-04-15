@@ -105,19 +105,19 @@ const getRarityImage = (rarity) => {
 const getElementImage = (element) => {
     switch (element) {
       case 'None':
-        return 'gjk2Y82D/Element-None';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_All.webp?alt=media&token=917fa46b-a576-42b8-aead-2404898aaae5';
       case 'poison':
-        return 'PxHqRBG0/Element-Poison';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Poison.webp?alt=media&token=26b59aaf-7ba5-481e-ab01-d8982cb34936';
       case 'light':
-        return 'Kjqv4jKy/Element-Light';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Light.webp?alt=media&token=8a7a17aa-665e-4f0d-b848-433d6006344b';
       case 'water':
-        return 'FK5FY2K1/Element-Water';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Water.webp?alt=media&token=501d6721-054d-43f1-a0c8-9e7bd0b4952f';
       case 'earth':
-        return 'FK3RGh6j/Element-Earth';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Earth.webp?alt=media&token=e6b040a0-6178-4f44-b996-f0054ba71e91';
       case 'ice':
-        return 'PxMqs2TJ/Element-Ice';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Ice.webp?alt=media&token=005c5b44-b8d6-4ab5-820c-7edac0690ade';
       case 'fire':
-        return 'ZKn528gY/Element-Fire';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Fire.webp?alt=media&token=9a5d64d7-1a23-4498-95f3-16ca1da821ba';
       default:
         return '5NPXQn9S/close';
     }

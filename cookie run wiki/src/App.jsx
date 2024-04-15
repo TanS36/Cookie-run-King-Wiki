@@ -7,19 +7,17 @@ import NoPage from './components/pages/NoPage.jsx';
 import StoryPage from './components/pages/StoryPage.jsx';
 import ProfilePage from './components/pages/ProfilePage.jsx';
 import LoginPage from './components/molecules/registration/LoginPage.jsx';
-import PrivateRoute from './components/molecules/registration/PrivateRoute';
 import CharacterPage from './components/pages/CharacterPage.jsx';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/story" element={<StoryPage />} />
-        <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/profile" element={<ProfilePage />} isAuthenticated={isAuthenticated} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/characters/:characterName" element={<CharacterPage />} />
         <Route path="*" element={<NoPage />} />
       </Routes>

@@ -24,7 +24,7 @@ const Character = () => {
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const [charactersPerPage, setCharactersPerPage] = useState(36);
+  const [charactersPerPage, setCharactersPerPage] = useState(24);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   const [characters, setCharacters] = useState([]);
