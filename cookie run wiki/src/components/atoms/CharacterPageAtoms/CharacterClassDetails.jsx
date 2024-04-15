@@ -2,7 +2,11 @@ import React from 'react';
 
 const CharacterDetails = ({ character }) => {
   const renderElements = () => {
-    if (Array.isArray(character.element)) {
+    if (!character || !character.element) {
+      return null; // Return null or any other default content if character or character.element is undefined
+    }
+
+       if (Array.isArray(character.element)) {
       return character.element.map((element, index) => (
         <div className="Block" key={index}>
           <img src={`https://i.postimg.cc/${getElementImage(element)}.png`} alt={element} />
@@ -10,13 +14,18 @@ const CharacterDetails = ({ character }) => {
         </div>
       ));
     } else {
-      const elements = JSON.parse(character.element);
-      return elements.map((element, index) => (
-        <div className="Block" key={index}>
-          <img src={`https://i.postimg.cc/${getElementImage(element)}.png`} alt={element} />
-          <p>{getElementText(element)}</p>
-        </div>
-      ));
+      try {
+        const elements = JSON.parse(character.element);
+        return elements.map((element, index) => (
+          <div className="Block" key={index}>
+            <img src={`${getElementImage(element)}`} alt={element} />
+            <p>{getElementText(element)}</p>
+          </div>
+        ));
+      } catch (error) {
+        console.error("Error parsing element JSON:", error);
+        return null; // Return null or handle the error gracefully
+      }
     }
   };
 
@@ -119,7 +128,7 @@ const getElementImage = (element) => {
       case 'fire':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Fire.webp?alt=media&token=9a5d64d7-1a23-4498-95f3-16ca1da821ba';
       default:
-        return '5NPXQn9S/close';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_All.webp?alt=media&token=917fa46b-a576-42b8-aead-2404898aaae5';
     }
   };
 
