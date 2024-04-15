@@ -327,6 +327,7 @@ const Character = () => {
                 <option value="">All</option>
                 <option value="Ovenbreak">Ovenbreak</option>
                 <option value="Kingdom">Kingdom</option>
+                <option value="China">China</option>
                 <option value="Collab">Collab</option>
               </select>
             </div>
