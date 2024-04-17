@@ -3,13 +3,13 @@ import React from 'react';
 const CharacterDetails = ({ character }) => {
   const renderElements = () => {
     if (!character || !character.element) {
-      return null; // Return null or any other default content if character or character.element is undefined
+      return null; 
     }
 
        if (Array.isArray(character.element)) {
       return character.element.map((element, index) => (
         <div className="Block" key={index}>
-          <img src={`https://i.postimg.cc/${getElementImage(element)}.png`} alt={element} />
+          <img src={`${getElementImage(element)}`} alt={element} />
           <p>{getElementText(element)}</p>
         </div>
       ));
@@ -24,7 +24,7 @@ const CharacterDetails = ({ character }) => {
         ));
       } catch (error) {
         console.error("Error parsing element JSON:", error);
-        return null; // Return null or handle the error gracefully
+        return null;
       }
     }
   };
@@ -36,7 +36,7 @@ const CharacterDetails = ({ character }) => {
         <p>{character.rarity} rarity</p>
       </div>
       <div className="Block">
-        {character.class && <img src={`https://i.postimg.cc/${getClassImage(character.class)}.png`} alt={character.class} />}
+        {character.class && <img src={`${getClassImage(character.class)}`} alt={character.class} />}
         <p>{character.class} class</p>
       </div>
       <div className="blockimage Block">
@@ -47,7 +47,6 @@ const CharacterDetails = ({ character }) => {
     </div>
   );
 };
-
 const getRarityImage = (rarity) => {
     switch (rarity) {
       case 'Common':
@@ -76,28 +75,29 @@ const getRarityImage = (rarity) => {
   const getClassImage = (characterClass) => {
     switch (characterClass) {
       case 'Ambush':
-        return 'gjXB6c4Z/Ambush';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FAmbush.webp?alt=media&token=5fa87ad0-f743-4054-b711-6108e40871fa';
       case 'Bomber':
-        return 'MHC30krr/Bomber';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FBomber.webp?alt=media&token=178ce04c-6563-4cac-8b8d-ce21e7a87957';
       case 'BTS':
-        return 'K8mZjT62/BTS-Class';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FBTSclass.webp?alt=media&token=ac5500df-fa51-44b7-9c6c-12fd8a295a65';
       case 'Charge':
-        return 'c1vscQbQ/Charge';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FCharge.webp?alt=media&token=95fa57ed-c8b5-444f-809e-f06443b1b208';
       case 'Defense':
-        return 'Dzfh4sG4/Defense';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FDefense.webp?alt=media&token=d2f7b16b-6b61-4128-95c7-f6500213ca4f';
       case 'Healing':
-        return 'kML7YB0L/Healing';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FHealing.webp?alt=media&token=7b65fa05-8427-4eea-bb60-5ae7584d4dca';
       case 'Magic':
-        return 'htBcgNPr/Magic';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FMagic.webp?alt=media&token=45b70eba-18c2-40c2-b994-50160369fad7';
       case 'Ranged':
-        return 'MKRqCzxH/Ranged';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FRanged.webp?alt=media&token=c9a4bba3-c61f-457f-8ac0-bc8ca74fc2c0';
       case 'Support':
-        return 'pLJxdkmt/Support';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FSupport.webp?alt=media&token=ea345fcc-f094-4cd4-8ec0-b8884882fa9b';
       default:
-        return '5NPXQn9S/close';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
+      case none:
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }
   };
-
   const getPositionImage = (position) => {
     switch (position) {
       case 'Front':
@@ -107,7 +107,7 @@ const getRarityImage = (rarity) => {
       case 'Rear':
         return 'W1phNRhV/Rear';
       default:
-        return '5NPXQn9S/close';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }
   };
 
@@ -128,7 +128,7 @@ const getElementImage = (element) => {
       case 'fire':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Fire.webp?alt=media&token=9a5d64d7-1a23-4498-95f3-16ca1da821ba';
       default:
-        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_All.webp?alt=media&token=917fa46b-a576-42b8-aead-2404898aaae5';
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }
   };
 

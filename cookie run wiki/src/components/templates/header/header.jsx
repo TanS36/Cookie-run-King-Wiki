@@ -28,7 +28,7 @@ const Header = () => {
         ) : (
         <li className={styles.Menu}><Link to="/profile">Profile</Link></li> 
         )}
-        <img src="https://i.postimg.cc/85VcgYwN/Logo.png" alt="image 1"></img>
+        <img src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FLogo.webp?alt=media&token=732c8ebf-ef4c-4771-b418-269d63729e0e" alt="image 1"></img>
       </div>
     </header>
   );

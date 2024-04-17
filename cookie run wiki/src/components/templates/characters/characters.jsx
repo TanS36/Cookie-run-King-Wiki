@@ -254,7 +254,7 @@ const Character = () => {
   return (
     <div className={styles.content}>
       <div className={styles.Sort_head} onClick={toggleFilters}>
-        <img className={styles.Sort_Icon} src="https://i.postimg.cc/nhCC4BCb/Sort-Icon.png" alt="Filter" />
+        <img className={styles.Sort_Icon} src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FSort-Icon.webp?alt=media&token=97187f82-b5ed-4206-a39c-233943b4f4ac" alt="Filter" />
       </div>
 
       {showFilters && (
@@ -409,7 +409,7 @@ const Character = () => {
           ) : (
             <div className={styles.no_results_container}>
               <p>Результат не найден</p>
-              <img src="https://cdn.comic.studio/images/cookierun/characters/b933f9e7b3af34fcd881b9191612886b/exhausted.png" alt="Exhausted"/>
+              <img src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FNo-page-image.webp?alt=media&token=0330973d-5cf5-467d-a5ed-3b2733ec766f" alt="Exhausted"/>
             </div>
           )}
         </div>
