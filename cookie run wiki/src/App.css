@@ -4,7 +4,9 @@ body {
     min-height: 100vh;
     overflow-x: hidden; 
 }
-
+body.fonts-loaded {
+    font-family: 'Nunito', sans-serif;
+  }
 *,
 *::before,
 *::after {
