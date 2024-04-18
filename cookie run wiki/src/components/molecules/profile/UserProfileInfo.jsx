@@ -10,7 +10,7 @@ const UserProfileInfo = ({ username, profileIcon, status, role, description, reg
     <div className="UserProfileInfo">
       <div className="MainProfile">
         <img src={profileIcon} alt="Profile Icon" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h2>{username}</h2>
           <p>Status: {status}</p>
           <p>Role: {role}</p>
@@ -18,10 +18,12 @@ const UserProfileInfo = ({ username, profileIcon, status, role, description, reg
           <button onClick={() => console.log('Settings')}>Settings</button>
         </div>
       </div>
-      <div className="UserDetails">
-        <p>Description: {description}</p>
-        <p>Registration Date: {registrationDate}</p>
-        <p>Edit Count: {editCount}</p>
+      <div className="SecondProfile">
+        <div className="UserDetails">
+          <p>Description: {description}</p>
+          <p>Registration Date: {registrationDate}</p>
+          <p>Edit Count: {editCount}</p>
+        </div>
       </div>
     </div>
   );

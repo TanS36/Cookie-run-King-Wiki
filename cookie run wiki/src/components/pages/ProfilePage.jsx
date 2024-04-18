@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
-import '../organisms/ProfilePage.sass';
+import styles from '../organisms/ProfilePage.module.sass';
 import UserProfileInfo from '../molecules/profile/UserProfileInfo.jsx';
 import { auth } from '../../../firebase';
 
@@ -21,7 +21,7 @@ const ProfilePage = () => {
   return (
     <div className="story">
       <Header />
-      <div className="content">
+      <div className={styles.content}>
         <UserProfileInfo {...userData} />
       </div>
       <Footer />

@@ -1,13 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import { fontFace } from 'polished';
 
-// Определение стилей альтернативного шрифта
-const alternativeFont = `
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
-  font-family: Arial, sans-serif;
-`;
-
-// Определение стилей основного шрифта
+// Определите стили шрифта
 const nunitoFont = fontFace({
   fontFamily: 'Nunito',
   fontFilePath: 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap',
@@ -16,10 +10,21 @@ const nunitoFont = fontFace({
   fontWeight: 'normal',
 });
 
-// Создание глобальных стилей
+// Создайте глобальные стили
 const GlobalStyle = createGlobalStyle`
-  ${alternativeFont}
-  ${nunitoFont}
+  .fonts-loaded * {
+    font-family: 'Nunito', sans-serif;
+  }
 `;
+
+// Функция для загрузки шрифта и применения стилей
+const loadFontAndApplyStyles = () => {
+  document.fonts.load('1em Nunito').then(() => {
+    document.documentElement.classList.add('fonts-loaded');
+  });
+};
+
+// Вызываем функцию загрузки шрифта при загрузке страницы
+window.addEventListener('load', loadFontAndApplyStyles);
 
 export default GlobalStyle;
