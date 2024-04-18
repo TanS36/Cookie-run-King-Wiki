@@ -2,9 +2,10 @@ import { createGlobalStyle } from 'styled-components';
 import { fontFace } from 'polished';
 
 // Определение стилей альтернативного шрифта
-const alternativeFont = fontFace({ 
-  fontFamily: 'Arial, sans-serif'
-}); 
+const alternativeFont = `
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+  font-family: Arial, sans-serif;
+`;
 
 // Определение стилей основного шрифта
 const nunitoFont = fontFace({
@@ -22,4 +23,3 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default GlobalStyle;
-
