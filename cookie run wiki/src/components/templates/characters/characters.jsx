@@ -5,7 +5,7 @@ import CharacterList from "./characterList";
 import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
-import { collection, getDocs} from "firebase/firestore"; 
+import { doc, collection, getDocs, getDoc} from "firebase/firestore"; 
 import { useAuthState } from 'react-firebase-hooks/auth'; 
 import {auth} from '../../../../firebase.js'
 
@@ -28,14 +28,14 @@ const Character = () => {
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   const [characters, setCharacters] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [user, loading2, error] = useAuthState(auth);
 
   useEffect(() => {
-    setLoading(true);
-
     const fetchData = async () => {
+      setLoading(true);
+  
       const charactersRef = await getDocs(collection(firestore, "Characters"));
-    
       const charactersData = charactersRef.docs.map(doc => {
         const data = doc.data();
         const releaseDate = data.releaseDate ? data.releaseDate.toDate() : null; 
@@ -45,7 +45,7 @@ const Character = () => {
           releaseDate: releaseDate
         };
       });
-    
+  
       const options = {
         searchTerm,
         selectedElement,
@@ -58,8 +58,6 @@ const Character = () => {
         selectedGame,
         selectedSeason
       };
-      console.log("User:", user); 
-
       const sortedChars = filterAndSortCharacters(charactersData, options);
       
       setCharacters(sortedChars); 
@@ -73,10 +71,22 @@ const Character = () => {
       
       setLoading(false);
     };
-
+  
+    const fetchFavorites = async () => {
+      if (user) {
+        const favoritesRef = doc(firestore, 'users', user.uid);
+        const favoritesSnap = await getDoc(favoritesRef);
+        if (favoritesSnap.exists()) {
+          const favoritesData = favoritesSnap.data();
+          setFavorites(favoritesData.favorites || []);
+        }
+      }
+    };
+  
     fetchData();
+    fetchFavorites();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
-    selectedSeason, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
+    selectedSeason, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters, user]);
   
   const loadNextPage = () => {
     if (!showAllCharacters) {
@@ -94,7 +104,7 @@ const Character = () => {
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
-      setCharactersPerPage(36);
+      setCharactersPerPage(24);
       setShowAllCharacters(false);
       setShowAllButtonVisible(true);
       setPageNumber(1); 
@@ -110,59 +120,6 @@ const Character = () => {
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
-  };
-
-  // Добавляем функцию для обновления статуса избранности персонажа
-  const toggleFavorite = async (characterId) => {
-    // Получаем документ из коллекции Favorites пользователя
-    const favoriteDocRef = doc(firestore, "Favorites", user.uid);
-
-    try {
-      const docSnapshot = await getDocs(favoriteDocRef);
-      if (docSnapshot.exists()) {
-        // Если документ существует, получаем его данные
-        const favoritesData = docSnapshot.data();
-        // Проверяем, есть ли текущий персонаж в избранных
-        const isCharacterFavorite = favoritesData.characters.includes(characterId);
-
-        // Обновляем массив избранных персонажей
-        if (isCharacterFavorite) {
-          // Если персонаж уже избранный, удаляем его из массива
-          const updatedFavorites = favoritesData.characters.filter(id => id !== characterId);
-          await setDoc(favoriteDocRef, { characters: updatedFavorites });
-        } else {
-          // Если персонаж не избранный, добавляем его в массив
-          const updatedFavorites = [...favoritesData.characters, characterId];
-          await setDoc(favoriteDocRef, { characters: updatedFavorites });
-        }
-      } else {
-        // Если документ не существует, создаем новый документ с массивом избранных персонажей
-        await setDoc(favoriteDocRef, { characters: [characterId] });
-      }
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-  };
-
-  // Функция для проверки, является ли персонаж избранным
-  const isCharacterFavorite = (characterId) => {
-    if (user) {
-      // Если пользователь авторизован, проверяем наличие персонажа в его избранных
-      const favoriteCharacters = firestore.collection("Favorites").doc(user.uid).get();
-      return favoriteCharacters.then(doc => {
-        if (doc.exists) {
-          return doc.data().characters.includes(characterId);
-        } else {
-          return false;
-        }
-      }).catch(error => {
-        console.error("Error getting favorite characters:", error);
-        return false;
-      });
-    } else {
-      // Если пользователь не авторизован, всегда возвращаем false
-      return false;
-    }
   };
 
   const handleElementChange = (element) => {
@@ -403,8 +360,7 @@ const Character = () => {
           {filteredCharacters.length > 0 ? (
             <CharacterList 
               characters={filteredCharacters} 
-              toggleFavorite={toggleFavorite} 
-              isFavorite={isCharacterFavorite} 
+              favorites={favorites}
             />
           ) : (
             <div className={styles.no_results_container}>
