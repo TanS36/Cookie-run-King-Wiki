@@ -127,6 +127,8 @@ const getElementImage = (element) => {
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Ice.webp?alt=media&token=005c5b44-b8d6-4ab5-820c-7edac0690ade';
       case 'fire':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Fire.webp?alt=media&token=9a5d64d7-1a23-4498-95f3-16ca1da821ba';
+      case 'electricity':
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Light.webp?alt=media&token=8a7a17aa-665e-4f0d-b848-433d6006344b';
       default:
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }
@@ -148,6 +150,8 @@ const getElementText = (element) => {
         return 'Ice element';
       case 'fire':
         return 'Fire element';
+      case 'electricity':
+        return 'Electricity element';
       default:
         return 'Without element';
     }

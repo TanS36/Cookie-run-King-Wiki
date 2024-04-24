@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import styles from './character.module.sass';
 import CharacterList from "./characterList";
-import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
+import PaginationButtons from "./PaginationButtons";
+import { filterAndSortCharacters, rarityOrder, seasons } from "../../atoms/characterUtils";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
 import { doc, collection, getDocs, getDoc} from "firebase/firestore"; 
@@ -23,6 +24,7 @@ const Character = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
+  const [totalCharacters, setTotalCharacters] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [charactersPerPage, setCharactersPerPage] = useState(24);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
@@ -30,6 +32,7 @@ const Character = () => {
   const [characters, setCharacters] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [user, loading2, error] = useAuthState(auth);
+  const favoriteCharacters = characters.filter(character => favorites.includes(character.id));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,11 +59,12 @@ const Character = () => {
         sortField,
         sortOrder,
         selectedGame,
-        selectedSeason
+        selectedSeason,
       };
       const sortedChars = filterAndSortCharacters(charactersData, options);
       
-      setCharacters(sortedChars); 
+      setCharacters(sortedChars);
+      setTotalCharacters(sortedChars.length);
       
       if (showAllCharacters) {
         setFilteredCharacters(sortedChars);
@@ -86,21 +90,7 @@ const Character = () => {
     fetchData();
     fetchFavorites();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
-    selectedSeason, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters, user]);
-  
-  const loadNextPage = () => {
-    if (!showAllCharacters) {
-      setPageNumber(pageNumber + 1);
-    }
-  };
-    
-  const loadPreviousPage = () => {
-    if (!showAllCharacters && pageNumber > 1) {
-      setPageNumber(pageNumber - 1);
-    }
-  };
-
-  const charactersOnCurrentPage = filteredCharacters.length;
+    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, user,  pageNumber]);
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
@@ -115,6 +105,16 @@ const Character = () => {
       setShowAllButtonVisible(false);
       setPageNumber(1); 
       setFilteredCharacters(characters); 
+    }
+  };
+
+  const showFavCharactersHandler = () => {
+    if (showAllCharacters) {
+      setPageNumber(1); 
+      setFilteredCharacters(characters); 
+    } else {
+      setPageNumber(1); 
+      setFilteredCharacters(favoriteCharacters.slice(0, charactersPerPage));
     }
   };
 
@@ -150,25 +150,6 @@ const Character = () => {
   const handleSeasonChange = (season) => {
     setSelectedSeason(seasons[season]);
     setPageNumber(1);
-  };
-  
-  
-  const seasons = {
-    "Gingerbrave": { start: new Date("2021-01-21"), end: new Date("2021-04-07") },
-    "Pure Vanilla": { start: new Date("2021-04-08"), end: new Date("2021-06-20") },
-    "Sea Fairy": { start: new Date("2021-06-21"), end: new Date("2021-09-01") },
-    "Hollyberry": { start: new Date("2021-09-02"), end: new Date("2021-11-17") },
-    "Frost Queen": { start: new Date("2021-11-18"), end: new Date("2022-02-23") },
-    "Dark Cacao": { start: new Date("2022-02-24"), end: new Date("2022-05-02") },
-    "Clotted Cream": { start: new Date("2022-05-03"), end: new Date("2022-09-05") },
-    "Black Pearl": { start: new Date("2022-09-06"), end: new Date("2022-11-29") },
-    "Sherbet": { start: new Date("2022-11-18"), end: new Date("2023-01-18") },
-    "Moonlight": { start: new Date("2023-01-19"), end: new Date("2023-05-17") },
-    "Pitaya Dragon": { start: new Date("2023-05-18"), end: new Date("2023-08-08") },
-    "Mermaid's Tale": { start: new Date("2023-08-09"), end: new Date("2023-09-25") },
-    "Golden Cheese": { start: new Date("2023-09-26"), end: new Date("2024-01-18") },
-    "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-03-26") },
-    "Cuckoo Town Square": { start: new Date("2024-03-27"), end: new Date("2024-07-18") },
   };
   
   const handleSortOrderChange = (field, sortOrder) => {
@@ -237,6 +218,7 @@ const Character = () => {
                 <option value="water">Water</option>
                 <option value="earth">Earth</option>
                 <option value="ice">Ice</option>
+                <option value="electricity">Electricity</option>
               </select>
             </div>
             <div className={styles.Sort_Block}>
@@ -343,14 +325,12 @@ const Character = () => {
             ) : (
               <button onClick={showAllCharactersHandler}>Show Pages</button>
             )}
+            <button onClick={showFavCharactersHandler}>Favorite</button>
           </div>
         </div>
       )}
 
-      <div className={styles.Searchbuttons}>
-      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
-      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters && !loading && (<button onClick={loadNextPage}>Next Page</button>)}
-      </div>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters}/>
       {loading ? (
         <div className="loader-container">
           <RingLoader color={"#36D7B7"} loading={loading} size={300} />
@@ -370,10 +350,7 @@ const Character = () => {
           )}
         </div>
       )}
-      <div className={styles.Searchbuttons}>
-      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
-      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters &&!loading && (<button onClick={loadNextPage}>Next Page</button>)}
-      </div>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters}/>
     </div>
   );
 };
