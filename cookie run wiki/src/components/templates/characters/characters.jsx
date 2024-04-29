@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import styles from './character.module.sass';
 import CharacterList from "./characterList";
 import PaginationButtons from "./PaginationButtons";
-import { filterAndSortCharacters, rarityOrder, seasons } from "../../atoms/characterUtils";
+import { filterAndSortCharacters, rarityOrder, seasons } from "../../atoms/characterUtils.js";
+import characterFilterAndSort from "../../atoms/characterFilterAndSort.js";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
 import { doc, collection, getDocs, getDoc} from "firebase/firestore"; 
@@ -28,11 +29,10 @@ const Character = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [charactersPerPage, setCharactersPerPage] = useState(24);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
-  const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
+  const [showFavCharacters, setShowFavCharacters] = useState(false);
   const [characters, setCharacters] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [user, loading2, error] = useAuthState(auth);
-  const favoriteCharacters = characters.filter(character => favorites.includes(character.id));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +72,7 @@ const Character = () => {
       } else {
         setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
       }
-      
+
       setLoading(false);
     };
   
@@ -90,34 +90,33 @@ const Character = () => {
     fetchData();
     fetchFavorites();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
-    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, user,  pageNumber]);
+    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, showFavCharacters, user,  pageNumber]);
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
       setCharactersPerPage(24);
       setShowAllCharacters(false);
-      setShowAllButtonVisible(true);
       setPageNumber(1); 
       setFilteredCharacters(characters.slice(0, charactersPerPage));
     } else {
       setCharactersPerPage(characters.length);
       setShowAllCharacters(true);
-      setShowAllButtonVisible(false);
       setPageNumber(1); 
       setFilteredCharacters(characters); 
     }
   };
 
   const showFavCharactersHandler = () => {
-    if (showAllCharacters) {
+    if (showFavCharacters) {
+      const favChars = characters.filter(character => favorites.includes(character.id));
+      setFilteredCharacters(favChars);
       setPageNumber(1); 
-      setFilteredCharacters(characters); 
     } else {
+      setFilteredCharacters(characters);
+      setCharactersPerPage(24); 
       setPageNumber(1); 
-      setFilteredCharacters(favoriteCharacters.slice(0, charactersPerPage));
     }
   };
-
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -197,8 +196,7 @@ const Character = () => {
 
       {showFilters && (
         <div className={styles.sort} id="myDIV">
-          <div className={styles.BlockS + styles.Search}>
-
+          <div className={styles.BlockS}>
             <input
               type="text"
               value={searchTerm}
@@ -320,17 +318,21 @@ const Character = () => {
           </div>
           <div className={styles.BlockS}>
             <button onClick={resetFilters}>Reset</button>
-            {showAllButtonVisible ? (
+            {showAllCharacters ? (
               <button onClick={showAllCharactersHandler}>Show All</button>
             ) : (
               <button onClick={showAllCharactersHandler}>Show Pages</button>
             )}
-            <button onClick={showFavCharactersHandler}>Favorite</button>
+            {showFavCharacters ? (
+              <button onClick={showFavCharactersHandler}>Show Favorite</button>
+            ) : (
+              <button onClick={showFavCharactersHandler}>Show All</button>
+            )}
           </div>
         </div>
       )}
 
-      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters}/>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} filteredCharacters={filteredCharacters}/>
       {loading ? (
         <div className="loader-container">
           <RingLoader color={"#36D7B7"} loading={loading} size={300} />
@@ -350,7 +352,7 @@ const Character = () => {
           )}
         </div>
       )}
-      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters}/>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} filteredCharacters={filteredCharacters}/>
     </div>
   );
 };

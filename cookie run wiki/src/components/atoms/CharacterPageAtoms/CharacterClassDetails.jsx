@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from '../../organisms/CharacterPage.module.sass'
 
 const CharacterDetails = ({ character }) => {
   const renderElements = () => {
@@ -8,7 +9,7 @@ const CharacterDetails = ({ character }) => {
 
        if (Array.isArray(character.element)) {
       return character.element.map((element, index) => (
-        <div className="Block" key={index}>
+        <div className={styles.Block} key={index}>
           <img src={`${getElementImage(element)}`} alt={element} />
           <p>{getElementText(element)}</p>
         </div>
@@ -17,7 +18,7 @@ const CharacterDetails = ({ character }) => {
       try {
         const elements = JSON.parse(character.element);
         return elements.map((element, index) => (
-          <div className="Block" key={index}>
+          <div className={styles.Block} key={index}>
             <img src={`${getElementImage(element)}`} alt={element} />
             <p>{getElementText(element)}</p>
           </div>
@@ -30,16 +31,16 @@ const CharacterDetails = ({ character }) => {
   };
 
   return (
-    <div className="character-details">
-      <div className="Block">
+    <div className={styles.CharacterDetails}>
+      <div className={styles.Block}>
         {character.rarity && <img src={`https://i.postimg.cc/${getRarityImage(character.rarity)}.png`} alt={character.rarity} />}
         <p>{character.rarity} rarity</p>
       </div>
-      <div className="Block">
+      <div className={styles.Block}>
         {character.class && <img src={`${getClassImage(character.class)}`} alt={character.class} />}
         <p>{character.class} class</p>
       </div>
-      <div className="blockimage Block">
+      <div className={styles.Block}>
         {character.position && <img src={`https://i.postimg.cc/${getPositionImage(character.position)}.png`} alt={character.position} />}
         <p>{character.position} position</p>
       </div>

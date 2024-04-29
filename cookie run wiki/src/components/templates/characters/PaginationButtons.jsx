@@ -2,7 +2,7 @@
 import React from "react";
 import styles from './character.module.sass';
 
-const PaginationButtons = ({ pageNumber, setPageNumber, charactersPerPage, totalCharacters }) => {
+const PaginationButtons = ({ pageNumber, setPageNumber, charactersPerPage, totalCharacters, filteredCharacters }) => {
   const totalPages = Math.ceil(totalCharacters / charactersPerPage);
 
   const loadNextPage = () => {
@@ -17,13 +17,8 @@ const PaginationButtons = ({ pageNumber, setPageNumber, charactersPerPage, total
     }
   };
 
-  console.log('totalPages:', totalPages);
-  console.log('pageNumber:', pageNumber);
-  console.log('totalCharacters:', totalCharacters);
-  console.log('charactersPerPage:', charactersPerPage);
-
-  if (totalPages <= 1) {
-    return null; // or you can return a message or placeholder
+  if (totalPages <= 1 || filteredCharacters.length === 0) {
+    return null; 
   }
 
   return (

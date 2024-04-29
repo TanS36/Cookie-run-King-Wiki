@@ -3,6 +3,7 @@ import { firestore } from "../../../../firebase";
 import { collection, query, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebase.js';
+import styles from '../../organisms/CharacterPage.module.sass'
 
 const FavCharacterFunction = ({ character }) => {
     const [user] = useAuthState(auth);
@@ -39,7 +40,7 @@ const FavCharacterFunction = ({ character }) => {
     };
 
     return (
-        <button className="favorite_button" onClick={toggleFavorite}>
+        <button className={styles.FavoriteButton} onClick={toggleFavorite}>
             {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
         </button>
     );

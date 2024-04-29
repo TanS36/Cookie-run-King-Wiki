@@ -22,7 +22,7 @@ const Header = () => {
         </div>
         <li className={styles.Menu}><Link to="/">Main</Link></li>
         <li className={styles.Menu}><Link to="/">Characters</Link></li>
-        <li className={styles.Menu}><Link to="/story">Story</Link></li>
+        <li className={styles.Menu}><Link to="/">Story</Link></li>
         {!user ? (
         <li className={styles.Menu}><Link to="/login">Login</Link></li>  
         ) : (

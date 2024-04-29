@@ -5,6 +5,7 @@ import Header from '../../templates/header/header.jsx';
 import Footer from '../../templates/footer/footer.jsx';
 import styles from '../../organisms/LoginPage.module.sass';
 import {useSignInWithGoogle} from 'react-firebase-hooks/auth';
+import { doc, collection, getDoc, setDoc, getDocs } from "firebase/firestore";
 import {auth} from '../../../../firebase.js'
 
 const LoginPage = ({ setIsAuthenticated }) => {
@@ -12,9 +13,22 @@ const LoginPage = ({ setIsAuthenticated }) => {
   const history = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      history('/profile')
+    async function fetchData() {
+      if (user) {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+  
+        if (!userDocSnap.exists()) {
+          await setDoc(userDocRef, {
+            favorites: [] 
+          });
+        }
+  
+        history('/profile');
+      }
     }
+  
+    fetchData();
   }, [user]);
 
   return (

@@ -6,7 +6,8 @@ import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
 import CharacterDetails from '../atoms/CharacterPageAtoms/CharacterClassDetails.jsx';
 import FavCharacterFunction from '../atoms/CharacterPageAtoms/FavCharacterFunction.jsx';
-import '../organisms/CharacterPage.sass';
+import CharacterSkillDesc from '../atoms/CharacterPageAtoms/CharacterSkillDesc.jsx';
+import styles from '../organisms/CharacterPage.module.sass';
 
 const CharacterPage = ({ user }) => { 
   const { characterName } = useParams();
@@ -38,13 +39,14 @@ const CharacterPage = ({ user }) => {
   return (
     <div>
       <Header />
-      <div className="character-page" style={{ backgroundImage: `url(${character.bg})` }}>
+      <div className={styles.CharacterPage} style={{ backgroundImage: `url(${character.bg})` }}>
         <h1>{character.title}</h1>
-        <img className="character-art" src={character.ga} alt={character.name} />
+        <img className={styles.CharacterArt} src={character.ga} alt={character.name} />
       </div>
-      <div className="content">
+      <div className={styles.content}>
         <CharacterDetails character={character} />
         <FavCharacterFunction user={user} character={character} />
+        <CharacterSkillDesc character={character} />
       </div>
       <Footer />
     </div>
