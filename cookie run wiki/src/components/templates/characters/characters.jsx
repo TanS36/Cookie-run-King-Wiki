@@ -29,7 +29,6 @@ const Character = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [charactersPerPage, setCharactersPerPage] = useState(24);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
-  const [showFavCharacters, setShowFavCharacters] = useState(false);
   const [characters, setCharacters] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [user, loading2, error] = useAuthState(auth);
@@ -90,7 +89,7 @@ const Character = () => {
     fetchData();
     fetchFavorites();
   }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
-    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, showFavCharacters, user,  pageNumber]);
+    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, user,  pageNumber]);
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
@@ -105,18 +104,7 @@ const Character = () => {
       setFilteredCharacters(characters); 
     }
   };
-
-  const showFavCharactersHandler = () => {
-    if (showFavCharacters) {
-      const favChars = characters.filter(character => favorites.includes(character.id));
-      setFilteredCharacters(favChars);
-      setPageNumber(1); 
-    } else {
-      setFilteredCharacters(characters);
-      setCharactersPerPage(24); 
-      setPageNumber(1); 
-    }
-  };
+  
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -323,19 +311,14 @@ const Character = () => {
             ) : (
               <button onClick={showAllCharactersHandler}>Show Pages</button>
             )}
-            {showFavCharacters ? (
-              <button onClick={showFavCharactersHandler}>Show Favorite</button>
-            ) : (
-              <button onClick={showFavCharactersHandler}>Show All</button>
-            )}
           </div>
         </div>
       )}
 
       <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} filteredCharacters={filteredCharacters}/>
       {loading ? (
-        <div className="loader-container">
-          <RingLoader color={"#36D7B7"} loading={loading} size={300} />
+        <div className={styles.loader_container}>
+          <RingLoader color={"#36D7B7"} loading={loading} size={350} />
         </div>
       ) : (
         <div className={styles.characters}>

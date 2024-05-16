@@ -8,6 +8,7 @@ import StoryPage from './components/pages/StoryPage.jsx';
 import ProfilePage from './components/pages/ProfilePage.jsx';
 import LoginPage from './components/molecules/registration/LoginPage.jsx';
 import CharacterPage from './components/pages/CharacterPage.jsx';
+import UserSettingsPage from './components/molecules/registration/UserSettingsPage.jsx';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/story" element={<StoryPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<UserSettingsPage />} />
         <Route path="/characters/:characterName" element={<CharacterPage />} />
         <Route path="*" element={<NoPage />} />
       </Routes>
