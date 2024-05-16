@@ -73,15 +73,17 @@ export const filterAndSortCharacters = (characters, options) => {
   );
 
   return filteredChars.sort((a, b) => {
-    if (sortField === "rarity") {
-      return (
-        rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
-      ) * (sortOrder === "asc" ? 1 : -1);
-    } else if (sortField === "name") {
-      return (sortOrder === "asc" ? 1 : -1) * (a.title && b.title && a.title.localeCompare(b.title));
-    } else if (sortField === "id") {
-      return (sortOrder === "asc" ? 1 : -1) * (a.id - b.id);
+    switch (true) {
+      case sortField === "rarity":
+        return (
+          rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
+        ) * (sortOrder === "asc"? 1 : -1);
+      case sortField === "name":
+        return (sortOrder === "asc"? 1 : -1) * (a.title && b.title && a.title.localeCompare(b.title));
+      case sortField === "id":
+        return (sortOrder === "asc"? 1 : -1) * (a.id - b.id);
+      default:
+        return 0;
     }
-    return 0;
   });
 };

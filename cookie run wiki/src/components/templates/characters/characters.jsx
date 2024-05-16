@@ -307,9 +307,9 @@ const Character = () => {
           <div className={styles.BlockS}>
             <button onClick={resetFilters}>Reset</button>
             {showAllCharacters ? (
-              <button onClick={showAllCharactersHandler}>Show All</button>
-            ) : (
               <button onClick={showAllCharactersHandler}>Show Pages</button>
+            ) : (
+              <button onClick={showAllCharactersHandler}>Show All</button>
             )}
           </div>
         </div>
