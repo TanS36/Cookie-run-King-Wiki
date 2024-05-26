@@ -66,6 +66,8 @@ const getRarityImage = (rarity) => {
         return '7YT72rVy/Dragon';
       case 'Ancient':
         return 'L8KPkQCg/Ancient';
+      case 'Beast':
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FSoulstone_beast.webp?alt=media&token=fa1a0b67-957f-49f2-8148-d1a722718d7a';
       case 'Guest':
         return 'YStmZGwp/Guest';
       default:
@@ -130,6 +132,8 @@ const getElementImage = (element) => {
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Fire.webp?alt=media&token=9a5d64d7-1a23-4498-95f3-16ca1da821ba';
       case 'electricity':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Light.webp?alt=media&token=8a7a17aa-665e-4f0d-b848-433d6006344b';
+      case 'darkness':
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Darkness.webp?alt=media&token=986d0fa8-054a-4cc4-8e98-7760fc8c6cd8';
       default:
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }

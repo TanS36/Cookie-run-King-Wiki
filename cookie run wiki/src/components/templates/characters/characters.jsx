@@ -205,6 +205,7 @@ const Character = () => {
                 <option value="earth">Earth</option>
                 <option value="ice">Ice</option>
                 <option value="electricity">Electricity</option>
+                <option value="darkness">Darkness</option>
               </select>
             </div>
             <div className={styles.Sort_Block}>
@@ -242,6 +243,7 @@ const Character = () => {
                 <option value="Legendary">Legendary</option>
                 <option value="Dragon">Dragon</option>
                 <option value="Ancient">Ancient</option>
+                <option value="Beast">Beast</option>
                 <option value="Special">Special</option>
                 <option value="Guest">Guest</option>
               </select>

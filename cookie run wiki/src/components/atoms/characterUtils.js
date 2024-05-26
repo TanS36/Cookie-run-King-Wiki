@@ -7,6 +7,7 @@ export const rarityOrder = [
   "Legendary",
   "Dragon",
   "Ancient",
+  "Beast",
   "Special",
   "Guest",
 ];
