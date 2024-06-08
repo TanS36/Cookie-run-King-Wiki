@@ -13,7 +13,7 @@ import {auth} from '../../../../firebase.js'
 
 const Character = () => {
   const [loading, setLoading] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [selectedElement, setSelectedElement] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -27,7 +27,7 @@ const Character = () => {
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [totalCharacters, setTotalCharacters] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const [charactersPerPage, setCharactersPerPage] = useState(24);
+  const [charactersPerPage, setCharactersPerPage] = useState(18);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [characters, setCharacters] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -93,7 +93,7 @@ const Character = () => {
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
-      setCharactersPerPage(24);
+      setCharactersPerPage(18);
       setShowAllCharacters(false);
       setPageNumber(1); 
       setFilteredCharacters(characters.slice(0, charactersPerPage));
@@ -254,6 +254,7 @@ const Character = () => {
                 <option value="">All</option>
                 <option value="Ovenbreak">Ovenbreak</option>
                 <option value="Kingdom">Kingdom</option>
+                <option value="Global">Global</option>
                 <option value="China">China</option>
                 <option value="Collab">Collab</option>
               </select>

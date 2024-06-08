@@ -48,7 +48,7 @@ export const filterAndSortCharacters = (characters, options) => {
 
   const filteredChars = characters.filter((character) => {
     return searchWords.every(word => {
-      const regex = new RegExp(`\\b${word}`, 'i'); // Создаем регулярное выражение для поиска только в начале слова
+      const regex = new RegExp(`\\b${word}`, 'i'); 
       return character.title && regex.test(character.title.toLowerCase());
     });
   }).filter((character) =>
@@ -66,7 +66,7 @@ export const filterAndSortCharacters = (characters, options) => {
         : character.candy === undefined
       : true
   ).filter((character) =>
-    selectedGame ? character.game === selectedGame : true // Фильтрация по выбранной игре
+    selectedGame ? (character.game && character.game.includes(selectedGame)) : true
   ).filter((character) =>
     selectedSeason // Фильтрация по выбранному сезону
       ? character.releaseDate >= selectedSeason.start && character.releaseDate <= selectedSeason.end
