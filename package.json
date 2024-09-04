@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "firebase": "^10.8.0",
     "node-sass": "^9.0.0",
     "polished": "^4.2.2",
@@ -33,6 +34,9 @@
     "sass": "^1.69.5",
     "style-loader": "^3.3.4",
     "vite": "^5.2.8"
+=======
+    "@reduxjs/toolkit": "^2.2.3"
+>>>>>>> e41f3c8bbf0718bc69003f912d7c2b7a210d0432
   }
   
 }
