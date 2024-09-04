@@ -2,16 +2,18 @@
 import React, { useState, useEffect } from "react";
 import styles from './character.module.sass';
 import CharacterList from "./characterList";
-import { filterAndSortCharacters, rarityOrder } from "../../atoms/characterUtils";
+import PaginationButtons from "./PaginationButtons";
+import { filterAndSortCharacters, rarityOrder, seasons } from "../../atoms/characterUtils.js";
+import characterFilterAndSort from "../../atoms/characterFilterAndSort.js";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
-import { collection, getDocs} from "firebase/firestore"; 
+import { doc, collection, getDocs, getDoc} from "firebase/firestore"; 
 import { useAuthState } from 'react-firebase-hooks/auth'; 
 import {auth} from '../../../../firebase.js'
 
 const Character = () => {
   const [loading, setLoading] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [selectedElement, setSelectedElement] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -23,19 +25,19 @@ const Character = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCharactersWithCandy, setShowCharactersWithCandy] = useState(null);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
+  const [totalCharacters, setTotalCharacters] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const [charactersPerPage, setCharactersPerPage] = useState(36);
+  const [charactersPerPage, setCharactersPerPage] = useState(18);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
-  const [showAllButtonVisible, setShowAllButtonVisible] = useState(true);
   const [characters, setCharacters] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [user, loading2, error] = useAuthState(auth);
 
   useEffect(() => {
-    setLoading(true);
-
     const fetchData = async () => {
+      setLoading(true);
+  
       const charactersRef = await getDocs(collection(firestore, "Characters"));
-    
       const charactersData = charactersRef.docs.map(doc => {
         const data = doc.data();
         const releaseDate = data.releaseDate ? data.releaseDate.toDate() : null; 
@@ -45,7 +47,7 @@ const Character = () => {
           releaseDate: releaseDate
         };
       });
-    
+  
       const options = {
         searchTerm,
         selectedElement,
@@ -56,13 +58,12 @@ const Character = () => {
         sortField,
         sortOrder,
         selectedGame,
-        selectedSeason
+        selectedSeason,
       };
-      console.log("User:", user); 
-
       const sortedChars = filterAndSortCharacters(charactersData, options);
       
-      setCharacters(sortedChars); 
+      setCharacters(sortedChars);
+      setTotalCharacters(sortedChars.length);
       
       if (showAllCharacters) {
         setFilteredCharacters(sortedChars);
@@ -70,99 +71,42 @@ const Character = () => {
       } else {
         setFilteredCharacters(sortedChars.slice((pageNumber - 1) * charactersPerPage, pageNumber * charactersPerPage));
       }
-      
+
       setLoading(false);
     };
-
-    fetchData();
-  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
-    selectedSeason, showCharactersWithCandy, pageNumber, charactersPerPage, showAllCharacters]);
   
-  const loadNextPage = () => {
-    if (!showAllCharacters) {
-      setPageNumber(pageNumber + 1);
-    }
-  };
-    
-  const loadPreviousPage = () => {
-    if (!showAllCharacters && pageNumber > 1) {
-      setPageNumber(pageNumber - 1);
-    }
-  };
-
-  const charactersOnCurrentPage = filteredCharacters.length;
+    const fetchFavorites = async () => {
+      if (user) {
+        const favoritesRef = doc(firestore, 'users', user.uid);
+        const favoritesSnap = await getDoc(favoritesRef);
+        if (favoritesSnap.exists()) {
+          const favoritesData = favoritesSnap.data();
+          setFavorites(favoritesData.favorites || []);
+        }
+      }
+    };
+  
+    fetchData();
+    fetchFavorites();
+  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
+    selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, user,  pageNumber]);
 
   const showAllCharactersHandler = () => {
     if (showAllCharacters) {
-      setCharactersPerPage(36);
+      setCharactersPerPage(18);
       setShowAllCharacters(false);
-      setShowAllButtonVisible(true);
       setPageNumber(1); 
       setFilteredCharacters(characters.slice(0, charactersPerPage));
     } else {
       setCharactersPerPage(characters.length);
       setShowAllCharacters(true);
-      setShowAllButtonVisible(false);
       setPageNumber(1); 
       setFilteredCharacters(characters); 
     }
   };
-
+  
   const toggleFilters = () => {
     setShowFilters(!showFilters);
-  };
-
-  // Добавляем функцию для обновления статуса избранности персонажа
-  const toggleFavorite = async (characterId) => {
-    // Получаем документ из коллекции Favorites пользователя
-    const favoriteDocRef = doc(firestore, "Favorites", user.uid);
-
-    try {
-      const docSnapshot = await getDocs(favoriteDocRef);
-      if (docSnapshot.exists()) {
-        // Если документ существует, получаем его данные
-        const favoritesData = docSnapshot.data();
-        // Проверяем, есть ли текущий персонаж в избранных
-        const isCharacterFavorite = favoritesData.characters.includes(characterId);
-
-        // Обновляем массив избранных персонажей
-        if (isCharacterFavorite) {
-          // Если персонаж уже избранный, удаляем его из массива
-          const updatedFavorites = favoritesData.characters.filter(id => id !== characterId);
-          await setDoc(favoriteDocRef, { characters: updatedFavorites });
-        } else {
-          // Если персонаж не избранный, добавляем его в массив
-          const updatedFavorites = [...favoritesData.characters, characterId];
-          await setDoc(favoriteDocRef, { characters: updatedFavorites });
-        }
-      } else {
-        // Если документ не существует, создаем новый документ с массивом избранных персонажей
-        await setDoc(favoriteDocRef, { characters: [characterId] });
-      }
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-  };
-
-  // Функция для проверки, является ли персонаж избранным
-  const isCharacterFavorite = (characterId) => {
-    if (user) {
-      // Если пользователь авторизован, проверяем наличие персонажа в его избранных
-      const favoriteCharacters = firestore.collection("Favorites").doc(user.uid).get();
-      return favoriteCharacters.then(doc => {
-        if (doc.exists) {
-          return doc.data().characters.includes(characterId);
-        } else {
-          return false;
-        }
-      }).catch(error => {
-        console.error("Error getting favorite characters:", error);
-        return false;
-      });
-    } else {
-      // Если пользователь не авторизован, всегда возвращаем false
-      return false;
-    }
   };
 
   const handleElementChange = (element) => {
@@ -193,25 +137,6 @@ const Character = () => {
   const handleSeasonChange = (season) => {
     setSelectedSeason(seasons[season]);
     setPageNumber(1);
-  };
-  
-  
-  const seasons = {
-    "Gingerbrave": { start: new Date("2021-01-21"), end: new Date("2021-04-07") },
-    "Pure Vanilla": { start: new Date("2021-04-08"), end: new Date("2021-06-20") },
-    "Sea Fairy": { start: new Date("2021-06-21"), end: new Date("2021-09-01") },
-    "Hollyberry": { start: new Date("2021-09-02"), end: new Date("2021-11-17") },
-    "Frost Queen": { start: new Date("2021-11-18"), end: new Date("2022-02-23") },
-    "Dark Cacao": { start: new Date("2022-02-24"), end: new Date("2022-05-02") },
-    "Clotted Cream": { start: new Date("2022-05-03"), end: new Date("2022-09-05") },
-    "Black Pearl": { start: new Date("2022-09-06"), end: new Date("2022-11-29") },
-    "Sherbet": { start: new Date("2022-11-18"), end: new Date("2023-01-18") },
-    "Moonlight": { start: new Date("2023-01-19"), end: new Date("2023-05-17") },
-    "Pitaya Dragon": { start: new Date("2023-05-18"), end: new Date("2023-08-08") },
-    "Mermaid's Tale": { start: new Date("2023-08-09"), end: new Date("2023-09-25") },
-    "Golden Cheese": { start: new Date("2023-09-26"), end: new Date("2024-01-18") },
-    "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-03-26") },
-    "Cuckoo Town Square": { start: new Date("2024-03-27"), end: new Date("2024-07-18") },
   };
   
   const handleSortOrderChange = (field, sortOrder) => {
@@ -254,13 +179,12 @@ const Character = () => {
   return (
     <div className={styles.content}>
       <div className={styles.Sort_head} onClick={toggleFilters}>
-        <img className={styles.Sort_Icon} src="https://i.postimg.cc/nhCC4BCb/Sort-Icon.png" alt="Filter" />
+        <img className={styles.Sort_Icon} src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FSort-Icon.webp?alt=media&token=97187f82-b5ed-4206-a39c-233943b4f4ac" alt="Filter" />
       </div>
 
       {showFilters && (
         <div className={styles.sort} id="myDIV">
-          <div className={styles.BlockS + styles.Search}>
-
+          <div className={styles.BlockS}>
             <input
               type="text"
               value={searchTerm}
@@ -280,6 +204,9 @@ const Character = () => {
                 <option value="water">Water</option>
                 <option value="earth">Earth</option>
                 <option value="ice">Ice</option>
+                <option value="electricity">Electricity</option>
+                <option value="darkness">Darkness</option>
+                <option value="wind">Wind</option>
               </select>
             </div>
             <div className={styles.Sort_Block}>
@@ -317,6 +244,7 @@ const Character = () => {
                 <option value="Legendary">Legendary</option>
                 <option value="Dragon">Dragon</option>
                 <option value="Ancient">Ancient</option>
+                <option value="Beast">Beast</option>
                 <option value="Special">Special</option>
                 <option value="Guest">Guest</option>
               </select>
@@ -327,6 +255,8 @@ const Character = () => {
                 <option value="">All</option>
                 <option value="Ovenbreak">Ovenbreak</option>
                 <option value="Kingdom">Kingdom</option>
+                <option value="Global">Global</option>
+                <option value="China">China</option>
                 <option value="Collab">Collab</option>
               </select>
             </div>
@@ -380,43 +310,36 @@ const Character = () => {
           </div>
           <div className={styles.BlockS}>
             <button onClick={resetFilters}>Reset</button>
-            {showAllButtonVisible ? (
-              <button onClick={showAllCharactersHandler}>Show All</button>
-            ) : (
+            {showAllCharacters ? (
               <button onClick={showAllCharactersHandler}>Show Pages</button>
+            ) : (
+              <button onClick={showAllCharactersHandler}>Show All</button>
             )}
           </div>
         </div>
       )}
 
-      <div className={styles.Searchbuttons}>
-      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
-      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters && !loading && (<button onClick={loadNextPage}>Next Page</button>)}
-      </div>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} filteredCharacters={filteredCharacters}/>
       {loading ? (
-        <div className="loader-container">
-          <RingLoader color={"#36D7B7"} loading={loading} size={300} />
+        <div className={styles.loader_container}>
+          <RingLoader color={"#36D7B7"} loading={loading} size={350} />
         </div>
       ) : (
         <div className={styles.characters}>
           {filteredCharacters.length > 0 ? (
             <CharacterList 
               characters={filteredCharacters} 
-              toggleFavorite={toggleFavorite} 
-              isFavorite={isCharacterFavorite} 
+              favorites={favorites}
             />
           ) : (
             <div className={styles.no_results_container}>
               <p>Результат не найден</p>
-              <img src="https://cdn.comic.studio/images/cookierun/characters/b933f9e7b3af34fcd881b9191612886b/exhausted.png" alt="Exhausted"/>
+              <img src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FNo-page-image.webp?alt=media&token=0330973d-5cf5-467d-a5ed-3b2733ec766f" alt="Exhausted"/>
             </div>
           )}
         </div>
       )}
-      <div className={styles.Searchbuttons}>
-      {!showAllCharacters && pageNumber > 1 && !loading && <button onClick={loadPreviousPage}>Prev Page</button>}
-      {charactersOnCurrentPage === charactersPerPage && !showAllCharacters &&!loading && (<button onClick={loadNextPage}>Next Page</button>)}
-      </div>
+      <PaginationButtons pageNumber={pageNumber} setPageNumber={setPageNumber} charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} filteredCharacters={filteredCharacters}/>
     </div>
   );
 };

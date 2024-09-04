@@ -8,8 +8,9 @@
     margin-left: 30px 
 
     h2
+      font-family: Nunito, sans-serif
       font-weight: 700px
-      font-size: 28px
+      font-size: 36px
       color: #141517 
       margin: 10px 0 5px
 
@@ -20,28 +21,36 @@
       border-radius: 110px
 
     p  
+      font-family: Nunito, sans-serif
       font-size: 20px
       color: #141517 
 
     button
+        font-family: Nunito, sans-serif
         background-color: #d7c4b5  
         font-weight: 700px
         font-size: 18px
         height: 36px
         border: solid 2px
         margin-bottom: 5px
-
-  .UserDetails
-    display: flex
-    flex-direction: column
-    font-weight: 400px
-    font-size: 24px
-    color: #141517
-    background-color: #8768504D  
-    gap: 10px
-    margin: 10px 10px 10px 30px
-    border-radius: 10px 
-    padding: 10px
+        
+  .SecondProfile
+    width: 100%
+    height: 100%
+    .UserDetails
+      width: auto
+      height: auto
+      display: flex
+      font-family: Nunito, sans-serif
+      flex-direction: column
+      font-weight: 400
+      font-size: 24px
+      color: #141517
+      background-color: #8768504D  
+      gap: 10px
+      margin: 10px 30px
+      border-radius: 10px 
+      padding: 10px
 
   @media screen and (max-width: 900px)
     flex-direction: column
@@ -65,6 +74,7 @@
         height: 180px
         margin: 5px
         border-radius: 90px
+      
     
     .UserDetails
       display: flex

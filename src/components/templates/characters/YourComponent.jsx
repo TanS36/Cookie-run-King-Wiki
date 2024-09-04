@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './YourComponent.module.sass';
-import { useAuthState } from 'react-firebase-hooks/auth'; 
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebase.js';
 
-const YourComponent = ({ character }) => {
+const YourComponent = ({ character, isFavorite }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(character.isFavorite || false);
   const [user, loading, error] = useAuthState(auth);
 
   const handleMouseEnter = () => {
@@ -38,6 +37,5 @@ const YourComponent = ({ character }) => {
     </div>
   );
 };
+
 export default YourComponent;
-
-

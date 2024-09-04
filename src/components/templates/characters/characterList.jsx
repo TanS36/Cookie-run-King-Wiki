@@ -1,14 +1,17 @@
-// CharacterList.jsx
+//CharacterList component
 import React from 'react';
-import YourComponent from './YourComponent.jsx';
+import YourComponent from './YourComponent.jsx'; // Make sure this is the correct path to your component
 import styles from './YourComponent.module.sass';
 
-const CharacterList = ({ characters, toggleFavorite }) => {
+const CharacterList = ({ characters, favorites }) => {
   return (
-    <ul className={styles['characters']}>
-      {characters.map((character, index) => (
-        <li className={styles['cookie']} key={index}>
-          <YourComponent character={character} toggleFavorite={toggleFavorite} />  
+    <ul className={styles.characterList}>
+      {characters.map((character) => (
+        <li key={character.id} className={styles.characterCard}>
+          <YourComponent
+            character={character}
+            isFavorite={favorites.includes(character.id)}
+          />
         </li>
       ))}
     </ul>
