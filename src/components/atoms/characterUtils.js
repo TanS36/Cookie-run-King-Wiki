@@ -2,32 +2,21 @@
 export const rarityOrder = [
   "Common",
   "Rare",
+  "Special",
   "Epic",
   "Super epic",
   "Legendary",
   "Dragon",
   "Ancient",
   "Beast",
-  "Special",
   "Guest",
 ];
 
 export const seasons = {
-  "Gingerbrave": { start: new Date("2021-01-21"), end: new Date("2021-04-07") },
-  "Pure Vanilla": { start: new Date("2021-04-08"), end: new Date("2021-06-20") },
-  "Sea Fairy": { start: new Date("2021-06-21"), end: new Date("2021-09-01") },
-  "Hollyberry": { start: new Date("2021-09-02"), end: new Date("2021-11-17") },
-  "Frost Queen": { start: new Date("2021-11-18"), end: new Date("2022-02-23") },
-  "Dark Cacao": { start: new Date("2022-02-24"), end: new Date("2022-05-02") },
-  "Clotted Cream": { start: new Date("2022-05-03"), end: new Date("2022-09-05") },
-  "Black Pearl": { start: new Date("2022-09-06"), end: new Date("2022-11-29") },
-  "Sherbet": { start: new Date("2022-11-18"), end: new Date("2023-01-18") },
-  "Moonlight": { start: new Date("2023-01-19"), end: new Date("2023-05-17") },
-  "Pitaya Dragon": { start: new Date("2023-05-18"), end: new Date("2023-08-08") },
-  "Mermaid's Tale": { start: new Date("2023-08-09"), end: new Date("2023-09-25") },
-  "Golden Cheese": { start: new Date("2023-09-26"), end: new Date("2024-01-18") },
-  "White Lily": { start: new Date("2024-01-19"), end: new Date("2024-03-26") },
-  "Cuckoo Town Square": { start: new Date("2024-03-27"), end: new Date("2024-07-18") },
+  "2021": { start: new Date("2021-01-01"), end: new Date("2021-12-31") },
+  "2022": { start: new Date("2022-01-01"), end: new Date("2022-12-31") },
+  "2023": { start: new Date("2023-01-01"), end: new Date("2021-12-31") },
+  "2024": { start: new Date("2024-01-01"), end: new Date("2021-12-31") },
 };
 
 export const filterAndSortCharacters = (characters, options) => {
@@ -68,7 +57,7 @@ export const filterAndSortCharacters = (characters, options) => {
   ).filter((character) =>
     selectedGame ? (character.game && character.game.includes(selectedGame)) : true
   ).filter((character) =>
-    selectedSeason // Фильтрация по выбранному сезону
+    selectedSeason 
       ? character.releaseDate >= selectedSeason.start && character.releaseDate <= selectedSeason.end
       : true
   );
@@ -78,11 +67,13 @@ export const filterAndSortCharacters = (characters, options) => {
       case sortField === "rarity":
         return (
           rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)
-        ) * (sortOrder === "asc"? 1 : -1);
+        ) * (sortOrder === "asc" ? 1 : -1);
       case sortField === "name":
-        return (sortOrder === "asc"? 1 : -1) * (a.title && b.title && a.title.localeCompare(b.title));
+        return (sortOrder === "asc" ? 1 : -1) * (a.title && b.title && a.title.localeCompare(b.title));
       case sortField === "id":
-        return (sortOrder === "asc"? 1 : -1) * (a.id - b.id);
+        return (sortOrder === "asc" ? 1 : -1) * (a.id - b.id);
+      case sortField === "random":
+        return Math.random() - 0.5;  
       default:
         return 0;
     }
