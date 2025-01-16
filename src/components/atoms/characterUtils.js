@@ -17,6 +17,7 @@ export const seasons = {
   "2022": { start: new Date("2022-01-01"), end: new Date("2022-12-31") },
   "2023": { start: new Date("2023-01-01"), end: new Date("2023-12-31") },
   "2024": { start: new Date("2024-01-01"), end: new Date("2024-12-31") },
+  "2025": { start: new Date("2025-01-01"), end: new Date("2025-12-31") },
 };
 
 export const filterAndSortCharacters = (characters, options) => {

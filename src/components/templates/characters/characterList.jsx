@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 //CharacterList component
 import React from 'react';
 import YourComponent from './YourComponent.jsx'; // Make sure this is the correct path to your component

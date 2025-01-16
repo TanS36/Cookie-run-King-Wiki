@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 // PaginationButtons.jsx
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import styles from './character.module.sass';
 

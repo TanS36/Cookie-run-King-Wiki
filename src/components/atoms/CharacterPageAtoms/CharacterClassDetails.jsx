@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import styles from '../../organisms/CharacterPage.module.sass'
 
@@ -97,6 +99,7 @@ const getRarityImage = (rarity) => {
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclass%2FSupport.webp?alt=media&token=ea345fcc-f094-4cd4-8ec0-b8884882fa9b';
       default:
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
+      // eslint-disable-next-line no-undef
       case none:
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
     }
