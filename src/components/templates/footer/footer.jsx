@@ -1,5 +1,3 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import { FaYoutube, FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import styles from "./footer.module.sass";
 
@@ -24,7 +22,7 @@ function Footer() {
             <p>the game "Cookie run Kingdom"</p>
             <p>All rights are with Devsisters Corp</p>
           </div>
-          <p id={styles.NameComp}>DEVSISTERS</p>
+          <p className={styles.NameComp}>DEVSISTERS</p>
         </div>
       </div>
     </footer>
