@@ -138,6 +138,8 @@ const getElementImage = (element) => {
       case 'darkness':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Darkness.webp?alt=media&token=986d0fa8-054a-4cc4-8e98-7760fc8c6cd8';
       case 'wind':
+        return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Wind.webp?alt=media&token=6a42371f-6ce1-4fde-b8b7-05fe1754adff'; 
+      case 'steel':
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FElement_Wind.webp?alt=media&token=6a42371f-6ce1-4fde-b8b7-05fe1754adff';  
       default:
         return 'https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2Fclose.webp?alt=media&token=0e5444fa-bc2b-44dd-b8da-d71f6110c0ca';
@@ -166,6 +168,8 @@ const getElementText = (element) => {
         return 'Darkness element';
       case 'wind':
         return 'Wind element';
+      case 'steel':
+        return 'Steel element';
       default:
         return 'Without element';
     }

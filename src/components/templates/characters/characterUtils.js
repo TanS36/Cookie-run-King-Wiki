@@ -1,4 +1,4 @@
-//characterUtils.js
+//scr/components/templates/characters/characterUtils.js
 export const rarityOrder = [
   "Common",
   "Rare",
@@ -23,10 +23,10 @@ export const seasons = {
 export const filterAndSortCharacters = (characters, options) => {
   const {
     searchTerm,
-    selectedElement,
+    selectedElements,
     selectedClass,
     selectedPosition,
-    selectedRarity,
+    selectedRarities,
     showCharactersWithCandy,
     sortField,
     sortOrder,
@@ -42,13 +42,17 @@ export const filterAndSortCharacters = (characters, options) => {
       return character.title && regex.test(character.title.toLowerCase());
     });
   }).filter((character) =>
-    selectedElement ? (character.element && character.element.includes(selectedElement)) : true
+  Array.isArray(selectedElements) && selectedElements.length > 0
+    ? character.element && selectedElements.some(el => character.element.includes(el))
+    : true
   ).filter((character) =>
     selectedClass ? character.class === selectedClass : true
   ).filter((character) =>
     selectedPosition ? character.position === selectedPosition : true
   ).filter((character) =>
-    selectedRarity ? character.rarity === selectedRarity : true
+  Array.isArray(selectedRarities) && selectedRarities.length > 0
+    ? selectedRarities.includes(character.rarity)
+    : true
   ).filter((character) =>
     showCharactersWithCandy !== null
       ? showCharactersWithCandy

@@ -1,10 +1,9 @@
-//characters.jsx
-import React, { useState, useEffect } from "react";
-import styles from './character.module.sass';
+//scr/components/templates/characters/characters.jsx
+import { useState, useEffect } from "react";
+import styles from './ui/character.module.sass';
 import CharacterList from "./characterList";
 import PaginationButtons from "./PaginationButtons";
-import { filterAndSortCharacters, rarityOrder, seasons } from "../../atoms/characterUtils.js";
-import characterFilterAndSort from "../../atoms/characterFilterAndSort.js";
+import { filterAndSortCharacters, rarityOrder, seasons } from "./characterUtils.js";
 import { RingLoader } from "react-spinners";
 import { firestore } from "../../../../firebase";
 import { doc, collection, getDocs, getDoc} from "firebase/firestore"; 
@@ -14,10 +13,10 @@ import {auth} from '../../../../firebase.js'
 const Character = () => {
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
-  const [selectedElement, setSelectedElement] = useState(null);
+  const [selectedElements, setSelectedElements] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
-  const [selectedRarity, setSelectedRarity] = useState(null);
+  const [selectedRarities, setSelectedRarities] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [sortField, setSortField] = useState("rarity");
@@ -50,10 +49,10 @@ const Character = () => {
   
       const options = {
         searchTerm,
-        selectedElement,
+        selectedElements,
         selectedClass,
         selectedPosition,
-        selectedRarity,
+        selectedRarities,
         showCharactersWithCandy,
         sortField,
         sortOrder,
@@ -88,7 +87,7 @@ const Character = () => {
   
     fetchData();
     fetchFavorites();
-  }, [sortField, sortOrder, searchTerm, selectedElement, selectedClass, selectedPosition, selectedRarity, selectedGame,
+  }, [sortField, sortOrder, searchTerm, selectedElements, selectedClass, selectedPosition, selectedRarities, selectedGame,
     selectedSeason, showCharactersWithCandy, charactersPerPage, showAllCharacters, user,  pageNumber]);
 
   const showAllCharactersHandler = () => {
@@ -109,9 +108,15 @@ const Character = () => {
     setShowFilters(!showFilters);
   };
 
-  const handleElementChange = (element) => {
-    setSelectedElement(element);
-    setPageNumber(1); 
+  const toggleElement = (element) => {
+    if (selectedElements.includes(element)) return;
+    setSelectedElements(prev => [...prev, element]);
+    setPageNumber(1);
+  };
+
+  const removeElement = (element) => {
+    setSelectedElements(prev => prev.filter(el => el !== element));
+    setPageNumber(1);
   };
 
   const handleClassChange = (characterClass) => {
@@ -124,9 +129,16 @@ const Character = () => {
     setPageNumber(1); 
   };
 
-  const handleRarityChange = (rarity) => {
-    setSelectedRarity(rarity);
-    setPageNumber(1); 
+  const toggleRarity = (rarity) => {
+    if (!selectedRarities.includes(rarity)) {
+      setSelectedRarities(prev => [...prev, rarity]);
+      setPageNumber(1);
+    }
+  };
+
+  const removeRarity = (rarity) => {
+    setSelectedRarities(prev => prev.filter(r => r !== rarity));
+    setPageNumber(1);
   };
 
   const handleGameChange = (game) => {
@@ -152,10 +164,10 @@ const Character = () => {
   
 
   const resetFilters = () => {
-    setSelectedElement(null);
+    setSelectedElements([]);
     setSelectedClass(null);
     setSelectedPosition(null);
-    setSelectedRarity(null);
+    setSelectedRarities([]);
     setSelectedGame(null); 
     setSelectedSeason(null);
     setSortField("rarity");
@@ -181,7 +193,6 @@ const Character = () => {
       <div className={styles.Sort_head} onClick={toggleFilters}>
         <img className={styles.Sort_Icon} src="https://firebasestorage.googleapis.com/v0/b/kingdom-5919a.appspot.com/o/other%2FSort-Icon.webp?alt=media&token=97187f82-b5ed-4206-a39c-233943b4f4ac" alt="Filter" />
       </div>
-
       {showFilters && (
         <div className={styles.sort} id="myDIV">
           <div className={styles.BlockS}>
@@ -195,22 +206,35 @@ const Character = () => {
           <div className={styles.BlockS}>
             <div className={styles.Sort_Block}>
               <label>Element</label>
-              <select value={selectedElement || ""} onChange={(e) => handleElementChange(e.target.value || null)}>
-                <option value="">All</option>
-                <option value="None">None</option>
-                <option value="fire">Fire</option>
-                <option value="poison">Poison</option>
-                <option value="light">Light</option>
-                <option value="water">Water</option>
-                <option value="earth">Earth</option>
-                <option value="ice">Ice</option>
-                <option value="electricity">Electricity</option>
-                <option value="darkness">Darkness</option>
-                <option value="wind">Wind</option>
-                <option value="nature">Nature</option>
-                <option value="steel">Steel</option>
-                <option value="element12">12</option>
+              <select
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value && !selectedElements.includes(value)) {
+                    toggleElement(value);
+                  }
+                }}
+                value=""
+              >
+                <option value="">Select element</option>
+                {[
+                  "fire", "poison", "light", "water", "earth",
+                  "ice", "electricity", "darkness", "wind", "nature", "steel", "None"
+                ].map((element) => (
+                  <option key={element} value={element}>
+                    {element.charAt(0).toUpperCase() + element.slice(1)}
+                  </option>
+                ))}
               </select>
+
+              {/* Показываем выбранные элементы */}
+              <div className={styles.selectedElements}>
+                {selectedElements.map((element) => (
+                  <div key={element} className={styles.selectedItem}>
+                    <img src={`/icons/elements/${element}.png`} alt={element} width={20} />
+                    <button onClick={() => removeElement(element)} className={styles.removeBtn}>×</button>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className={styles.Sort_Block}>
               <label>Class</label>
@@ -238,19 +262,28 @@ const Character = () => {
             </div>
             <div className={styles.Sort_Block}>
               <label>Rarity</label>
-              <select value={selectedRarity || ""} onChange={(e) => handleRarityChange(e.target.value || null)}>
-                <option value="">All</option>
-                <option value="Common">Common</option>
-                <option value="Rare">Rare</option>
-                <option value="Epic">Epic</option>
-                <option value="Super epic">Super epic</option>
-                <option value="Legendary">Legendary</option>
-                <option value="Dragon">Dragon</option>
-                <option value="Ancient">Ancient</option>
-                <option value="Beast">Beast</option>
-                <option value="Special">Special</option>
-                <option value="Guest">Guest</option>
+              <select
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value && !selectedRarities.includes(value)) {
+                    toggleRarity(value);
+                  }
+                }}
+                value=""
+              >
+                <option value="">Select rarity</option>
+                {rarityOrder.map((rarity) => (
+                  <option key={rarity} value={rarity}>{rarity}</option>
+                ))}
               </select>
+              <div className={styles.selectedElements}>
+                {selectedRarities.map((rarity) => (
+                  <div key={rarity} className={styles.selectedItem}>
+                    <span>{rarity}</span>
+                    <button onClick={() => removeRarity(rarity)} className={styles.removeBtn}>×</button>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className={styles.Sort_Block}>
               <label>Game</label>

@@ -1,4 +1,3 @@
-import React from 'react';
 import Header from '../templates/header/header.jsx';
 import Footer from '../templates/footer/footer.jsx';
 import Character from '../templates/characters/characters.jsx';
